@@ -1,11 +1,13 @@
 package classes;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Voto implements Serializable {
     private User eleitor;
     private ListaCandidata escolhaVoto;
     private Departamento localVoto;
+    private Date horaVoto;
 
     public Voto(User eleitor, ListaCandidata escolhaVoto, Departamento localVoto) {
         this.eleitor = eleitor;
@@ -23,5 +25,9 @@ public class Voto implements Serializable {
 
     public Departamento getLocalVoto() {
         return localVoto;
+    }
+
+    public Date getHoraVoto() {
+        return horaVoto;
     }
 }

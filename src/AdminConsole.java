@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.net.MalformedURLException;
@@ -381,7 +382,7 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
         }
     }
 
-    // Opção 5 - Alterar propriedades de uma eleição
+    // Opção 5 (9) - Alterar propriedades de uma eleição
     private void editarEleicao() {
         try {
             Scanner sc = new Scanner(System.in);
@@ -420,6 +421,26 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    // Opção 6 (10) - Saber em que local votou cada eleitor
+    public void localVotoUsers() throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("Locais de voto dos eleitores");
+        System.out.print("Numero de utilizador do user: ");
+        String numero = reader.readLine();
+        ArrayList<Eleicao> eleicoes = new ArrayList<>();
+        while (true) {
+            try {
+                eleicoes = rmi.getListaEleicoes();
+                break;
+            } catch (RemoteException re) {
+                reconectarRMI();
+            }
+        }
+        for (Eleicao ele : eleicoes) {
+            ele.localVoto(numero);
         }
     }
 

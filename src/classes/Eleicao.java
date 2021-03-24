@@ -129,4 +129,17 @@ public class Eleicao implements Serializable {
         }
     }
 
+    public StringBuilder localVoto(String numero) {
+        System.out.println(this.getTitulo());
+        StringBuilder infoEleitor = new StringBuilder();
+        for (Voto voto : listaVotos) {
+            if (infoEleitor.equals(voto.getEleitor().getNumero())) {
+                infoEleitor.append("Nome: ").append(voto.getEleitor().getNome()).append("\n");
+                infoEleitor.append("Local voto: ").append(voto.getLocalVoto().getNome()).append("\n");
+                infoEleitor.append("Hora voto: ").append(voto.getHoraVoto()).append("\n\n");
+            }
+        }
+        return infoEleitor;
+    }
+
 }

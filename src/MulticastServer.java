@@ -64,6 +64,10 @@ public class MulticastServer extends Thread implements Serializable {
     public void addEleicao(Eleicao e) {
         this.listaEleicoes.add(e);
     }
+
+    public Boolean getEstadoMesaVoto() {
+        return estadoMesaVoto;
+    }
 }
 
 class MulticastReceiver extends Thread{

@@ -444,6 +444,26 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
         }
     }
 
+    // Opção 7 (11) - Ver estado das mesas de voto
+    public void estadoMesasVoto() {
+        try {
+            ArrayList<MulticastServer> mesasVoto;
+            while (true) {
+                try {
+                    mesasVoto = rmi.getMesasVoto();
+                    break;
+                } catch (RemoteException re) {
+                    reconectarRMI();
+                }
+            }
+            for (MulticastServer mesa : mesasVoto) {
+                System.out.println(mesa.getDepartamento().getNome() + " - " + mesa.getEstadoMesaVoto());
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     public void reconectarRMI() {
         int sleep = 1000;
         while (true) {

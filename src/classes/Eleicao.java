@@ -1,5 +1,6 @@
 package classes;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Eleicao implements Serializable {
@@ -140,6 +141,24 @@ public class Eleicao implements Serializable {
             }
         }
         return infoEleitor;
+    }
+
+    public void printEleicao() {
+        System.out.println(titulo);
+        System.out.println(descricao);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        System.out.println("Inicio: " + dateFormat.format(dataComeco));
+        System.out.println("Fim: " + dateFormat.format(dataFim));
+        for (ListaCandidata lista : listaCandidatas) {
+            System.out.println(lista.getNome());
+            int conta = 0;
+            for (Voto voto : listaVotos) {
+                if (voto.getEscolhaVoto().getNome().equals(lista.getNome())) {
+                    conta++;
+                }
+            }
+            System.out.println("Número de votos: " + conta);
+        }
     }
 
 }

@@ -1,5 +1,4 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
 import java.rmi.Remote;
@@ -20,6 +19,33 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
 
     public RMIServer() throws RemoteException {
         super();
+        this.listaEleicoes = new ArrayList<>();
+        this.listaDepartamentos = new ArrayList<>();
+        this.listaUsers = new ArrayList<>();
+        this.mesasVoto = new ArrayList<>();
+        this.users = new HashMap<String, String>();
+        this.loggedUsers = new ArrayList<>();
+        startDatabase();
+        for (User user : listaUsers) {
+            System.out.println(user.getNome());
+            System.out.println(user.getNumero());
+            System.out.println(user.getPassword());
+            // Autenticação de users através do numero e password
+            this.users.put(user.getNumero(), user.getPassword());
+        }
+        for (Departamento dep : listaDepartamentos) {
+            System.out.println(dep.getNome());
+        }
+        Calendar currentDate = Calendar.getInstance();
+        SimpleDateFormat formatedDate = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        try {
+            currentDate.setTime(formatedDate.parse("dd/MM/yyyy HH:mm"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        for (Eleicao eleicao : listaEleicoes) {
+
+        }
     }
 
     synchronized public void sayHello() throws RemoteException {
@@ -80,11 +106,75 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
  */
 
     public void startDatabase() {
-
+        ObjectInputStream oisUsers = null;
+        ObjectInputStream oisDepartamentos = null;
+        ObjectInputStream oisEleicoes = null;
+        ObjectInputStream oisMesasVoto = null;
+        try {
+            FileInputStream fis = new FileInputStream("database/users.obj");
+            oisUsers = new ObjectInputStream(fis);
+            this.listaUsers = (ArrayList<User>) oisUsers.readObject();
+            fis = new FileInputStream("database/departamentos.obj");
+            oisDepartamentos = new ObjectInputStream(fis);
+            this.listaDepartamentos = (ArrayList<Departamento>) oisDepartamentos.readObject();
+            fis = new FileInputStream("database/eleicoes.obj");
+            oisEleicoes = new ObjectInputStream(fis);
+            this.listaEleicoes = (ArrayList<Eleicao>) oisEleicoes.readObject();
+            fis = new FileInputStream("database/mesasVoto.obj");
+            oisMesasVoto = new ObjectInputStream(fis);
+            this.mesasVoto = (ArrayList<MulticastServer>) oisMesasVoto.readObject();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (oisUsers != null && oisDepartamentos != null && oisEleicoes != null && oisMesasVoto != null) {
+                try {
+                    oisUsers.close();
+                    oisDepartamentos.close();
+                    oisEleicoes.close();
+                    oisMesasVoto.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public void guardaDatabase() {
-
+        FileOutputStream fosUsers;
+        ObjectOutputStream oosUsers = null;
+        FileOutputStream fosDepartamentos;
+        ObjectOutputStream oosDepartamentos = null;
+        FileOutputStream fosEleicoes;
+        ObjectOutputStream oosEleicoes = null;
+        FileOutputStream fosMesasVoto;
+        ObjectOutputStream oosMesasVoto = null;
+        try {
+            fosUsers = new FileOutputStream("database/users.obj");
+            oosUsers = new ObjectOutputStream(fosUsers);
+            oosUsers.writeObject(listaUsers);
+            fosDepartamentos = new FileOutputStream("database/departamentos.obj");
+            oosDepartamentos = new ObjectOutputStream(fosDepartamentos);
+            oosDepartamentos.writeObject(listaDepartamentos);
+            fosEleicoes = new FileOutputStream("database/eleicoes.obj");
+            oosEleicoes = new ObjectOutputStream(fosEleicoes);
+            oosEleicoes.writeObject(listaEleicoes);
+            fosMesasVoto = new FileOutputStream("database/mesasVoto.obj");
+            oosMesasVoto = new ObjectOutputStream(fosMesasVoto);
+            oosMesasVoto.writeObject(mesasVoto);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (oosUsers != null && oosDepartamentos != null && oosEleicoes != null && oosMesasVoto != null) {
+                try {
+                    oosUsers.close();
+                    oosDepartamentos.close();
+                    oosEleicoes.close();
+                    oosMesasVoto.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public static void main(String[] args) throws RemoteException {

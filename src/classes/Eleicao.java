@@ -1,5 +1,6 @@
 package classes;
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -14,6 +15,7 @@ public class Eleicao implements Serializable {
     private ArrayList<Voto> listaVotos;
     private ArrayList<ListaCandidata> listaCandidatas;
 
+    private static DecimalFormat df = new DecimalFormat("0.00");
 
     public Eleicao() {
     }
@@ -32,6 +34,8 @@ public class Eleicao implements Serializable {
         this.descricao = descricao;
         this.listaDepartamento = listaDepartamento;
         this.listaCandidatas = listaCandidatas;
+        this.listaCandidatas.add(new ListaCandidata("Voto em Branco"));
+        this.listaCandidatas.add(new ListaCandidata("Voto Nulo"));
     }
 
     public Date getDataComeco() {
@@ -149,18 +153,53 @@ public class Eleicao implements Serializable {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         System.out.println("Inicio: " + dateFormat.format(dataComeco));
         System.out.println("Fim: " + dateFormat.format(dataFim));
+        float totalVotos = 0;
+        System.out.println("Valores absolutos da votação");
         for (ListaCandidata lista : listaCandidatas) {
-            System.out.println(lista.getNome());
-            /* DESCOMENTAR QUANDO VOTOS TIVEREM A SER VÁLIDOS
             int conta = 0;
             for (Voto voto : listaVotos) {
                 if (voto.getEscolhaVoto().getNome().equals(lista.getNome())) {
                     conta++;
                 }
             }
-            System.out.println("Número de votos: " + conta);
-             */
+            if (lista.getNome().equals("Voto em Branco")) {
+                System.out.println("Número de votos em branco = " + conta);
+                totalVotos += conta;
+            }
+            else if (lista.getNome().equals("Voto Nulo")){
+                totalVotos += conta;
+            }
+            else {
+                System.out.println("Número de votos da lista " + lista.getNome() + ": " + conta);
+                totalVotos += conta;
+            }
         }
+        System.out.println("Valores percentuais da votação");
+        float percVotos;
+        for (ListaCandidata lista : listaCandidatas) {
+            float conta = 0;
+            for (Voto voto : listaVotos) {
+                if (voto.getEscolhaVoto().getNome().equals(lista.getNome())) {
+                    conta++;
+                }
+            }
+            if (lista.getNome().equals("Voto em Branco")) {
+                percVotos = (conta/totalVotos)*100;
+                System.out.println("Percetagem de votos em branco = " + percVotos);
+            }
+            else if (lista.getNome().equals("Voto Nulo")){
+                percVotos = (conta/totalVotos)*100;
+                // não faz nada com os votos nulos - apenas contam para o total
+            }
+            else {
+                percVotos = (conta/totalVotos)*100;
+                System.out.println("Percetagem de votos da lista " + lista.getNome() + ": " + percVotos);
+            }
+        }
+    }
+
+    public void numVotosAtual() {
+        System.out.println("Voto até ao momento = " + this.listaVotos.size());
     }
 
 }

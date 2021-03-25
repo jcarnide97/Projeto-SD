@@ -18,7 +18,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
     private ArrayList<Departamento> listaDepartamentos;
     private ArrayList<User> listaUsers;
     private ArrayList<MulticastServer> mesasVoto;
-    private Map<String, String> users;
+    private Map<String, String> usersAuth;
     private ArrayList<String> loggedUsers;
 
     public RMIServer() throws RemoteException {
@@ -27,7 +27,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         this.listaDepartamentos = new ArrayList<>();
         this.listaUsers = new ArrayList<>();
         this.mesasVoto = new ArrayList<>();
-        this.users = new HashMap<String, String>();
+        this.usersAuth = new HashMap<String, String>();
         this.loggedUsers = new ArrayList<>();
         startDatabase();
         System.out.println("Leitura dos ficheiros de utilizadores...");
@@ -36,7 +36,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
             System.out.println(user.getNumero());
             System.out.println(user.getPassword());
             // Autenticação de users através do numero e password
-            this.users.put(user.getNumero(), user.getPassword());
+            this.usersAuth.put(user.getNome(), user.getPassword());
         }
         System.out.println("Leitura do ficheiro de departamentos...");
         for (Departamento dep : listaDepartamentos) {
@@ -112,6 +112,16 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
     synchronized public void removeMesaVoto(int i) {
         this.mesasVoto.remove(i);
         guardaDatabase();
+    }
+
+    public boolean userLogin(String nome, String password) throws RemoteException {
+        System.out.println("Verificar " + nome + "na database...");
+        boolean valido;
+        valido = usersAuth.containsKey(nome) && usersAuth.get(nome).equals(password);
+        if (valido) {
+            loggedUsers.add(nome);
+        }
+        return valido;
     }
 
     public void startDatabase() {

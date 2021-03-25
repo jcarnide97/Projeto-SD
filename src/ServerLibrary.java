@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import classes.*;
 
 public interface ServerLibrary extends Remote {
+    boolean userLogin(String nome, String password) throws RemoteException;
     public void sayHello() throws RemoteException;
     public void addDepartamento(Departamento dep) throws RemoteException;
     public Boolean registarUser(User user) throws RemoteException;

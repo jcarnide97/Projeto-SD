@@ -9,12 +9,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
 import classes.*;
-
-import javax.crypto.spec.PSource;
-
-import static java.lang.System.*;
+import static java.lang.System.exit;
 
 public class AdminConsole extends UnicastRemoteObject implements Serializable {
     ClientLibrary rmi;
@@ -501,6 +497,89 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
         }
     }
 
+    // Opção 8 (12) - Mostrar eleições em tempo real
+    public void eleicoesTempoReal() {
+        ArrayList<MulticastServer> mesasVoto;
+        while (true) {
+            try {
+                mesasVoto = rmi.getMesasVoto();
+                break;
+            } catch (RemoteException re) {
+                reconectarRMI();
+            }
+        }
+        int i = 0;
+        if (mesasVoto.isEmpty()) {
+            System.out.println("Não existem mesas de voto!");
+        } else {
+            System.out.println("Mesas de voto abertas:");
+            for (MulticastServer mesa : mesasVoto) {
+                if (mesa.getEstadoMesaVoto()) {
+                    i++;
+                    System.out.println("[" + i + "] " + mesa.getDepartamento().getNome());
+                }
+            }
+            if (i == 0) {
+                System.out.println("Não existem mesas de voto ativas!");
+            } else {
+                Scanner sc = new Scanner(System.in);
+                int opcao;
+                do {
+                    System.out.print(">>> ");
+                    opcao = sc.nextInt();
+                } while (opcao < 1 || opcao > mesasVoto.size());
+                MulticastServer mesaEscolhida = mesasVoto.get(opcao - 1);
+                System.out.println("Eleições a decorrer: ");
+                for (Eleicao eleicao : mesaEscolhida.getListaEleicoes()) {
+                    if (eleicao.votacaoAberta()) {
+                        System.out.println(eleicao.getTitulo());
+                        eleicao.numVotosAtual();
+                    }
+                }
+            }
+        }
+    }
+
+    // Opção 9 (14) - Consultar resultados detalhados de eleições passadas
+    public void consultarEleicoesPassadas() {
+        try {
+            ArrayList<Eleicao> listaEleicoes;
+            while (true) {
+                try {
+                    listaEleicoes = rmi.getListaEleicoes();
+                    break;
+                } catch (RemoteException re) {
+                    reconectarRMI();
+                }
+            }
+            ArrayList<Eleicao> eleicoesPassadas = new ArrayList<>();
+            int i = 0;
+            if (listaEleicoes.isEmpty()) {
+                System.out.println("Não exitem eleições!");
+            }
+            for (Eleicao eleicao : listaEleicoes) {
+                if (!eleicao.votacaoAcabou()) {
+                    eleicoesPassadas.add(eleicao);
+                }
+            }
+            System.out.println("Eleições passadas:");
+            for (Eleicao eleicao : eleicoesPassadas) {
+                i++;
+                System.out.println("[" + i + "] " + eleicao.getTitulo());
+            }
+            int opcao;
+            System.out.println("Escolha uma eleição");
+            Scanner sc = new Scanner(System.in);
+            do {
+                System.out.print(">>> ");
+                opcao = sc.nextInt();
+            } while (opcao < 1 || opcao > eleicoesPassadas.size());
+            eleicoesPassadas.get(opcao - 1).printEleicao();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     public void reconectarRMI() {
         int sleep = 1000;
         while (true) {
@@ -569,13 +648,15 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
                 "[4] Gerir Mesas de Voto\n" +
                 "[5] Alterar Propriedades de uma eleição\n" +
                 "[6] Saber Local de Voto dos Eleitores\n" +
-                "[7] Ver Estado das Mesas de Voto");
+                "[7] Ver Estado das Mesas de Voto" +
+                "[8] Mostar Eleições em Tempo Real" +
+                "[9] Consultar resultados de eleições passadas");
         Scanner sc = new Scanner(System.in);
         int opcao;
         do {
             System.out.print(">>> ");
             opcao = sc.nextInt();
-        } while (opcao < 0 || opcao > 7);
+        } while (opcao < 0 || opcao > 9);
         try {
             switch (opcao) {
                 case 0:
@@ -601,6 +682,12 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
                     break;
                 case 7:
                     estadoMesasVoto();
+                    break;
+                case 8:
+                    eleicoesTempoReal();
+                    break;
+                case 9:
+                    consultarEleicoesPassadas();
                     break;
                 default:
                     System.out.println("Comando Inválido");

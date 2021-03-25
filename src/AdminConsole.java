@@ -528,6 +528,7 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
             for (User user : rmi.getListaUsers()) {
                 user.printUsers();
             }
+            System.out.println("-------------------------");
             System.out.println("Eleições");
             for (Eleicao eleicao : rmi.getListaEleicoes()) {
                 eleicao.printEleicao();
@@ -536,10 +537,12 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
                     System.out.println(user.getNumero());
                 }
             }
+            System.out.println("-------------------------");
             System.out.println("Departamento");
             for (Departamento departamento : rmi.getListaDepartamentos()) {
                 System.out.println(departamento.getNome());
             }
+            System.out.println("-------------------------");
             System.out.println("Mesas de Voto");
             for (MulticastServer mesa : rmi.getMesasVoto()) {
                 System.out.println(mesa.getDepartamento().getNome());
@@ -548,6 +551,7 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
                     System.out.println(eleicao.getTitulo());
                 }
             }
+            System.out.println("-------------------------");
             System.out.println("\n\n");
         } catch (Exception e) {
             System.out.println(e.getMessage());

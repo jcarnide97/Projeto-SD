@@ -151,6 +151,7 @@ public class Eleicao implements Serializable {
         System.out.println("Fim: " + dateFormat.format(dataFim));
         for (ListaCandidata lista : listaCandidatas) {
             System.out.println(lista.getNome());
+            /* DESCOMENTAR QUANDO VOTOS TIVEREM A SER VÁLIDOS
             int conta = 0;
             for (Voto voto : listaVotos) {
                 if (voto.getEscolhaVoto().getNome().equals(lista.getNome())) {
@@ -158,6 +159,7 @@ public class Eleicao implements Serializable {
                 }
             }
             System.out.println("Número de votos: " + conta);
+             */
         }
     }
 

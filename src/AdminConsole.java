@@ -88,7 +88,7 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
             System.out.print("Validade Cartão Cidadão (mm/yyyy): ");
             validadeCC = reader.readLine();
             password = generatePassword();
-            System.out.print("Código de acesso gerado: " + password);
+            System.out.print("Código de acesso gerado: " + password + "\n");
             System.out.println("Tipo:\n[1] estudante\n[2] docente\n[3] funcionário");
             String tipo = reader.readLine();
             if (tipo.equals("1")) {
@@ -555,10 +555,10 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
     }
 
     public void adminConsoleMenu() {
-        eVotingStats(this.rmi);
+        // eVotingStats(this.rmi);
         System.out.println("\teVoting Console Admin Main Menu");
         System.out.println("Selecione uma opção:\n" +
-                "[0] Criar Departamento" +
+                "[0] Criar Departamento\n" +
                 "[1] Registar Utilizador\n" +
                 "[2] Criar Eleição\n" +
                 "[3] Gerir Listas de Candidatos a uma Eleição\n" +
@@ -617,30 +617,5 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
             System.out.println("Exception in main AdminConsole: " + e.getMessage());
             e.printStackTrace();
         }
-        /*
-        String teste;
-
-        System.getProperties().put("java.security.policy", "policy.all");
-        System.setSecurityManager(new RMISecurityManager());
-
-        InputStreamReader input = new InputStreamReader(System.in);
-        BufferedReader reader = new BufferedReader(input);
-        try {
-            ServerLibrary rmiServer = (ServerLibrary) Naming.lookup("RMI_Server");
-            AdminConsole adminConsole = new AdminConsole();
-            rmiServer.subscribe(args[0], (ClientLibrary) adminConsole);
-            System.out.println("Admin Console sent subscription to server");
-            while (true) {
-                System.out.print("> ");
-                teste = reader.readLine();
-                rmiServer.print_on_server(teste);
-            }
-
-        } catch (Exception e) {
-            System.out.println("Exception in main: " + e);
-            e.printStackTrace();
-        }
-
-         */
     }
 }

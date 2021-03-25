@@ -13,6 +13,7 @@ import java.util.*;
 import classes.*;
 
 public class RMIServer extends UnicastRemoteObject implements ServerLibrary, ClientLibrary {
+    private static final long serialVersionUID = 1L;
     private ArrayList<Eleicao> listaEleicoes;
     private ArrayList<Departamento> listaDepartamentos;
     private ArrayList<User> listaUsers;
@@ -29,6 +30,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         this.users = new HashMap<String, String>();
         this.loggedUsers = new ArrayList<>();
         startDatabase();
+        System.out.println("Leitura dos ficheiros de utilizadores...");
         for (User user : listaUsers) {
             System.out.println(user.getNome());
             System.out.println(user.getNumero());
@@ -36,16 +38,18 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
             // Autenticação de users através do numero e password
             this.users.put(user.getNumero(), user.getPassword());
         }
+        System.out.println("Leitura do ficheiro de departamentos...");
         for (Departamento dep : listaDepartamentos) {
             System.out.println(dep.getNome());
         }
         Calendar currentDate = Calendar.getInstance();
         SimpleDateFormat formatedDate = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         try {
-            currentDate.setTime(formatedDate.parse("dd/MM/yyyy HH:mm"));
+            currentDate.setTime(formatedDate.parse("25/03/2021 13:18"));
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        System.out.println("Leitura do ficheiro de Eleições...");
         for (Eleicao eleicao : listaEleicoes) {
             eleicao.printEleicao();
         }
@@ -109,13 +113,6 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         this.mesasVoto.remove(i);
         guardaDatabase();
     }
-/*
-    public void subscribe(String name, ClientLibrary client) throws RemoteException {
-        System.out.println("Subscribing " + name);
-        System.out.print("> ");
-        adminConsole = client;
-
- */
 
     public void startDatabase() {
         ObjectInputStream oisUsers = null;
@@ -123,16 +120,16 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         ObjectInputStream oisEleicoes = null;
         ObjectInputStream oisMesasVoto = null;
         try {
-            FileInputStream fis = new FileInputStream("users.obj");
+            FileInputStream fis = new FileInputStream("database/users.obj");
             oisUsers = new ObjectInputStream(fis);
             this.listaUsers = (ArrayList<User>) oisUsers.readObject();
-            fis = new FileInputStream("departamentos.obj");
+            fis = new FileInputStream("database/departamentos.obj");
             oisDepartamentos = new ObjectInputStream(fis);
             this.listaDepartamentos = (ArrayList<Departamento>) oisDepartamentos.readObject();
-            fis = new FileInputStream("eleicoes.obj");
+            fis = new FileInputStream("database/eleicoes.obj");
             oisEleicoes = new ObjectInputStream(fis);
             this.listaEleicoes = (ArrayList<Eleicao>) oisEleicoes.readObject();
-            fis = new FileInputStream("mesasVoto.obj");
+            fis = new FileInputStream("database/mesasVoto.obj");
             oisMesasVoto = new ObjectInputStream(fis);
             this.mesasVoto = (ArrayList<MulticastServer>) oisMesasVoto.readObject();
         } catch (Exception e) {
@@ -193,32 +190,12 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         try {
             RMIServer rmiServer = new RMIServer();
             Naming.rebind("RMI_Server", rmiServer);
-
+            System.out.println("RMI Server is ready...");
         } catch (RemoteException re) {
             System.out.println("Exception in RMIServer.main: " + re);
         } catch (MalformedURLException e) {
             System.out.println("MalformedURLException in RMIServer.main: " + e);
         }
-        /*
-        String teste;
-
-        System.getProperties().put("java.security.policy", "policy.all");
-        System.setSecurityManager(new RMISecurityManager());
-
-        InputStreamReader input = new InputStreamReader(System.in);
-        BufferedReader reader = new BufferedReader(input);
-        try {
-            RMIServer rmiServer = new RMIServer();
-            Naming.rebind("RMI_Server", rmiServer);
-            System.out.println("RMI Server is ready...");
-            while (true) {
-                teste = reader.readLine();
-                adminConsole.print_on_client(teste);
-            }
-        } catch (Exception re) {
-            System.out.println("Exception in main: " + re);
-        }
-         */
     }
 
 }

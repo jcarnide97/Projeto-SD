@@ -6,7 +6,9 @@ import classes.*;
 
 public interface ServerLibrary extends Remote {
     public void sayHello() throws RemoteException;
+    public void addDepartamento(Departamento dep) throws RemoteException;
     public Boolean registarUser(User user) throws RemoteException;
+    public ArrayList<User> getListaUsers() throws RemoteException;
     public ArrayList<Departamento> getListaDepartamentos() throws RemoteException;
     public void addEleicao(Eleicao eleicao) throws RemoteException;
     public ArrayList<Eleicao> getListaEleicoes() throws RemoteException;

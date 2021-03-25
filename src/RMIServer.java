@@ -1,8 +1,11 @@
 import java.io.*;
+import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,12 +47,17 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
             e.printStackTrace();
         }
         for (Eleicao eleicao : listaEleicoes) {
-
+            eleicao.printEleicao();
         }
     }
 
     synchronized public void sayHello() throws RemoteException {
         System.out.println("print do lado do servidor...");
+    }
+
+    synchronized public void addDepartamento(Departamento dep) {
+       this.listaDepartamentos.add(dep);
+       guardaDatabase();
     }
 
     synchronized public Boolean registarUser(User user) throws RemoteException {
@@ -64,6 +72,10 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
             }
         }
         return false;
+    }
+
+    synchronized public ArrayList<User> getListaUsers() {
+        return listaUsers;
     }
 
     synchronized public ArrayList<Departamento> getListaDepartamentos() {
@@ -111,16 +123,16 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         ObjectInputStream oisEleicoes = null;
         ObjectInputStream oisMesasVoto = null;
         try {
-            FileInputStream fis = new FileInputStream("database/users.obj");
+            FileInputStream fis = new FileInputStream("users.obj");
             oisUsers = new ObjectInputStream(fis);
             this.listaUsers = (ArrayList<User>) oisUsers.readObject();
-            fis = new FileInputStream("database/departamentos.obj");
+            fis = new FileInputStream("departamentos.obj");
             oisDepartamentos = new ObjectInputStream(fis);
             this.listaDepartamentos = (ArrayList<Departamento>) oisDepartamentos.readObject();
-            fis = new FileInputStream("database/eleicoes.obj");
+            fis = new FileInputStream("eleicoes.obj");
             oisEleicoes = new ObjectInputStream(fis);
             this.listaEleicoes = (ArrayList<Eleicao>) oisEleicoes.readObject();
-            fis = new FileInputStream("database/mesasVoto.obj");
+            fis = new FileInputStream("mesasVoto.obj");
             oisMesasVoto = new ObjectInputStream(fis);
             this.mesasVoto = (ArrayList<MulticastServer>) oisMesasVoto.readObject();
         } catch (Exception e) {
@@ -178,6 +190,15 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
     }
 
     public static void main(String[] args) throws RemoteException {
+        try {
+            RMIServer rmiServer = new RMIServer();
+            Naming.rebind("RMI_Server", rmiServer);
+
+        } catch (RemoteException re) {
+            System.out.println("Exception in RMIServer.main: " + re);
+        } catch (MalformedURLException e) {
+            System.out.println("MalformedURLException in RMIServer.main: " + e);
+        }
         /*
         String teste;
 

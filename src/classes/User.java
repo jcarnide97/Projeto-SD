@@ -86,4 +86,18 @@ public abstract class User implements Serializable {
 
     public abstract void addUser(ArrayList<User> listaUsers, Departamento dep);
 
+    public void printUsers() {
+        System.out.println(getNome());
+        System.out.println(getNumero());
+        System.out.println(getPassword());
+        System.out.println(getValidadeCC());
+        System.out.println(getDepartamento().getNome());
+        if (isEstudante()) {
+            System.out.println("Tipo: Estudante");
+        } else if (isDocente()) {
+            System.out.println("Tipo: Docente");
+        } else if (isFuncionario()) {
+            System.out.println("Tipo: Funcionário");
+        }
+    }
 }

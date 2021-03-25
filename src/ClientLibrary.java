@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import classes.*;
 
 public interface ClientLibrary extends Remote {
+    public void addDepartamento(Departamento dep) throws RemoteException;
     public Boolean registarUser(User user) throws RemoteException;
+    public ArrayList<User> getListaUsers() throws RemoteException;
     void sayHello() throws RemoteException;
     public ArrayList<Departamento> getListaDepartamentos() throws RemoteException;
     public void addEleicao(Eleicao eleicao) throws RemoteException;

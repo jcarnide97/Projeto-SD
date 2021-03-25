@@ -12,8 +12,9 @@ import java.util.*;
 
 import classes.*;
 
-import static java.lang.System.currentTimeMillis;
-import static java.lang.System.exit;
+import javax.crypto.spec.PSource;
+
+import static java.lang.System.*;
 
 public class AdminConsole extends UnicastRemoteObject implements Serializable {
     ClientLibrary rmi;
@@ -21,6 +22,42 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
     public AdminConsole(ClientLibrary rmi) throws RemoteException {
         super();
         this.rmi = rmi;
+        adminConsoleMenu();
+    }
+
+    public void criaDepartamento() {
+        try {
+            InputStreamReader input = new InputStreamReader(System.in);
+            BufferedReader reader = new BufferedReader(input);
+            System.out.println("Nome do departamento: ");
+            String nomeDep = reader.readLine();
+            ArrayList<Departamento> listaDepartamentos;
+            while (true) {
+                try {
+                    listaDepartamentos = rmi.getListaDepartamentos();
+                    break;
+                } catch (RemoteException re) {
+                    reconectarRMI();
+                }
+            }
+            for (Departamento departamento : listaDepartamentos) {
+                if (nomeDep.toUpperCase().equals(departamento.getNome().toUpperCase())) {
+                    System.out.println("Departamento já existente");
+                    return;
+                }
+            }
+            Departamento departamento = new Departamento(nomeDep, new ArrayList<>());
+            while (true) {
+                try {
+                    rmi.addDepartamento(departamento);
+                    break;
+                } catch (RemoteException re) {
+                    reconectarRMI();
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     // Opção 1 - Registar Utilizadores
@@ -485,7 +522,101 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
         }
     }
 
+    public void eVotingStats(ClientLibrary rmi) {
+        try {
+            System.out.println("Users");
+            for (User user : rmi.getListaUsers()) {
+                user.printUsers();
+            }
+            System.out.println("Eleições");
+            for (Eleicao eleicao : rmi.getListaEleicoes()) {
+                eleicao.printEleicao();
+                System.out.println("Número dos users da eleição");
+                for (User user : rmi.getListaUsers()) {
+                    System.out.println(user.getNumero());
+                }
+            }
+            System.out.println("Departamento");
+            for (Departamento departamento : rmi.getListaDepartamentos()) {
+                System.out.println(departamento.getNome());
+            }
+            System.out.println("Mesas de Voto");
+            for (MulticastServer mesa : rmi.getMesasVoto()) {
+                System.out.println(mesa.getDepartamento().getNome());
+                System.out.println("Eleições associadas à mesa " + mesa.getDepartamento().getNome());
+                for (Eleicao eleicao : mesa.getListaEleicoes()) {
+                    System.out.println(eleicao.getTitulo());
+                }
+            }
+            System.out.println("\n\n");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void adminConsoleMenu() {
+        eVotingStats(this.rmi);
+        System.out.println("\teVoting Console Admin Main Menu");
+        System.out.println("Selecione uma opção:\n" +
+                "[0] Criar Departamento" +
+                "[1] Registar Utilizador\n" +
+                "[2] Criar Eleição\n" +
+                "[3] Gerir Listas de Candidatos a uma Eleição\n" +
+                "[4] Gerir Mesas de Voto\n" +
+                "[5] Alterar Propriedades de uma eleição\n" +
+                "[6] Saber Local de Voto dos Eleitores\n" +
+                "[7] Ver Estado das Mesas de Voto");
+        Scanner sc = new Scanner(System.in);
+        int opcao;
+        do {
+            System.out.print(">>> ");
+            opcao = sc.nextInt();
+        } while (opcao < 0 || opcao > 7);
+        try {
+            switch (opcao) {
+                case 0:
+                    criaDepartamento();
+                    break;
+                case 1:
+                    registarUser();
+                    break;
+                case 2:
+                    criaEleicao();
+                    break;
+                case 3:
+                    gerirListas();
+                    break;
+                case 4:
+                    gerirMesasVoto();
+                    break;
+                case 5:
+                    editarEleicao();
+                    break;
+                case 6:
+                    localVotoUsers();
+                    break;
+                case 7:
+                    estadoMesasVoto();
+                    break;
+                default:
+                    System.out.println("Comando Inválido");
+            }
+            adminConsoleMenu();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
+
     public static void main(String[] args) {
+        try {
+            ClientLibrary rmi = (ClientLibrary) Naming.lookup("RMI_Server");
+            rmi.sayHello();
+            AdminConsole adminConsole = new AdminConsole(rmi);
+        } catch (Exception e) {
+            System.out.println("Exception in main AdminConsole: " + e.getMessage());
+            e.printStackTrace();
+        }
         /*
         String teste;
 

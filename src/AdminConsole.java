@@ -648,9 +648,9 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
                 "[4] Gerir Mesas de Voto\n" +
                 "[5] Alterar Propriedades de uma eleição\n" +
                 "[6] Saber Local de Voto dos Eleitores\n" +
-                "[7] Ver Estado das Mesas de Voto" +
-                "[8] Mostar Eleições em Tempo Real" +
-                "[9] Consultar resultados de eleições passadas");
+                "[7] Ver Estado das Mesas de Voto\n" +
+                "[8] Mostar Eleições em Tempo Real\n" +
+                "[9] Consultar resultados de eleições passadas\n");
         Scanner sc = new Scanner(System.in);
         int opcao;
         do {

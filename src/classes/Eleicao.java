@@ -163,17 +163,18 @@ public class Eleicao implements Serializable {
                 }
             }
             if (lista.getNome().equals("Voto em Branco")) {
-                System.out.println("Número de votos em branco = " + conta);
+                System.out.println("\tNúmero de votos em branco = " + conta);
                 totalVotos += conta;
             }
             else if (lista.getNome().equals("Voto Nulo")){
                 totalVotos += conta;
             }
             else {
-                System.out.println("Número de votos da lista " + lista.getNome() + ": " + conta);
+                System.out.println("\tNúmero de votos da lista " + lista.getNome() + "= " + conta);
                 totalVotos += conta;
             }
         }
+        System.out.println("\tTotal de Votos = " + (int)totalVotos);
         System.out.println("Valores percentuais da votação");
         float percVotos;
         for (ListaCandidata lista : listaCandidatas) {
@@ -185,7 +186,7 @@ public class Eleicao implements Serializable {
             }
             if (lista.getNome().equals("Voto em Branco")) {
                 percVotos = (conta/totalVotos)*100;
-                System.out.println("Percetagem de votos em branco = " + percVotos);
+                System.out.println("Percetagem de votos em branco = " + df.format(percVotos));
             }
             else if (lista.getNome().equals("Voto Nulo")){
                 percVotos = (conta/totalVotos)*100;
@@ -193,7 +194,7 @@ public class Eleicao implements Serializable {
             }
             else {
                 percVotos = (conta/totalVotos)*100;
-                System.out.println("Percetagem de votos da lista " + lista.getNome() + ": " + percVotos);
+                System.out.println("Percetagem de votos da lista " + lista.getNome() + ": " + df.format(percVotos));
             }
         }
     }

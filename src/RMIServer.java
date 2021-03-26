@@ -35,7 +35,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
             System.out.println(user.getNome());
             System.out.println(user.getNumero());
             System.out.println(user.getPassword());
-            // Autenticação de users através do numero e password
+            // Autenticação de users através do nome e password
             this.usersAuth.put(user.getNome(), user.getPassword());
         }
         System.out.println("Leitura do ficheiro de departamentos...");

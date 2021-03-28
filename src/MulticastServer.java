@@ -16,6 +16,7 @@ import classes.*;
 import static java.lang.System.exit;
 
 public class MulticastServer extends Thread implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String MULTICAST_ADDRESS = "224.0.224.0";
     private int PORT = 4321;
     private long SLEEP_TIME = 5000;
@@ -54,14 +55,14 @@ public class MulticastServer extends Thread implements Serializable {
         int sleep = 1000;
         while (true) {
             try {
-                rmi = (MulticastLibrary) Naming.lookup("RMI_Multicast");
+                rmi = (MulticastLibrary) Naming.lookup("RMI_Server");
                 rmi.sayHello();
             } catch (Exception e) {
                 try {
                     Thread.sleep(sleep);
                     sleep *= 2;
                     if (sleep > 16000) {
-                        System.out.println("Avaria no RMI Multicast");
+                        System.out.println("Avaria no RMI Server");
                         exit(0);
                     }
                 } catch (InterruptedException ie) {
@@ -76,7 +77,7 @@ public class MulticastServer extends Thread implements Serializable {
         MulticastServer server = new MulticastServer();
         server.start();
         try {
-            MulticastLibrary rmi = (MulticastLibrary) Naming.lookup("RMI_Multicast");
+            MulticastLibrary rmi = (MulticastLibrary) Naming.lookup("RMI_Server");
             rmi.sayHello();
             MulticastServer multiserver = new MulticastServer(rmi);
             InputStreamReader input = new InputStreamReader(System.in);

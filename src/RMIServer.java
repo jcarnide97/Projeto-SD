@@ -215,15 +215,6 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         } catch (MalformedURLException e) {
             System.out.println("MalformedURLException in RMIServer.main: " + e);
         }
-        try {
-            RMIServer rmiMulticast = new RMIServer();
-            Naming.rebind("RMI_Multicast", rmiMulticast);
-            System.out.println("RMI Multicast is ready...");
-        } catch (RemoteException re) {
-            System.out.println("Exception in RMIMulticast.main: " + re);
-        } catch (MalformedURLException e) {
-            System.out.println("MalformedURLException in RMIMulticast.main: " + e);
-        }
     }
 
 }

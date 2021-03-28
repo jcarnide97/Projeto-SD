@@ -153,7 +153,7 @@ public class Eleicao implements Serializable {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         System.out.println("Inicio: " + dateFormat.format(dataComeco));
         System.out.println("Fim: " + dateFormat.format(dataFim));
-        float totalVotos = this.listaVotos.size();
+        /*float totalVotos = this.listaVotos.size();
         System.out.println("Total de votos: " + (int)totalVotos);
         float percVotos;
         for (ListaCandidata lista : listaCandidatas) {
@@ -176,7 +176,7 @@ public class Eleicao implements Serializable {
                 percVotos = (conta/totalVotos)*100;
                 System.out.println("\tPercentagem de votos da lista " + lista.getNome() + "= " + percVotos);
             }
-        }
+        }*/
     }
 
     public void numVotosAtual() {

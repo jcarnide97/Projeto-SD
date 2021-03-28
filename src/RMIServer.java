@@ -12,13 +12,14 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import classes.*;
 
-public class RMIServer extends UnicastRemoteObject implements ServerLibrary, ClientLibrary {
+public class RMIServer extends UnicastRemoteObject implements ServerLibrary, ClientLibrary,MulticastLibrary {
     private static final long serialVersionUID = 1L;
     private ArrayList<Eleicao> listaEleicoes;
     private ArrayList<Departamento> listaDepartamentos;
     private ArrayList<User> listaUsers;
     private ArrayList<MulticastServer> mesasVoto;
     private Map<String, String> usersAuth;
+    private Map<String, String> usersAuth2;
     private ArrayList<String> loggedUsers;
 
     public RMIServer() throws RemoteException {
@@ -28,6 +29,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         this.listaUsers = new ArrayList<>();
         this.mesasVoto = new ArrayList<>();
         this.usersAuth = new HashMap<String, String>();
+        this.usersAuth2 = new HashMap<String, String>();
         this.loggedUsers = new ArrayList<>();
         startDatabase();
         System.out.println("Leitura dos ficheiros de utilizadores...");
@@ -37,6 +39,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
             System.out.println(user.getPassword());
             // Autenticação de users através do nome e password
             this.usersAuth.put(user.getNome(), user.getPassword());
+            this.usersAuth2.put(user.getNome(), user.getNumero());
         }
         System.out.println("Leitura do ficheiro de departamentos...");
         for (Departamento dep : listaDepartamentos) {
@@ -58,7 +61,6 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
     synchronized public void sayHello() throws RemoteException {
         System.out.println("print do lado do servidor...");
     }
-
     synchronized public void addDepartamento(Departamento dep) {
        this.listaDepartamentos.add(dep);
        guardaDatabase();
@@ -112,6 +114,13 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
     synchronized public void removeMesaVoto(int i) {
         this.mesasVoto.remove(i);
         guardaDatabase();
+    }
+
+    public boolean userAuth(String nome, String numero) throws RemoteException {
+        System.out.println("Autenticar " + nome + "na database...");
+        boolean valido;
+        valido = usersAuth2.containsKey(nome) && usersAuth2.get(nome).equals(numero);
+        return valido;
     }
 
     public boolean userLogin(String nome, String password) throws RemoteException {
@@ -205,6 +214,15 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
             System.out.println("Exception in RMIServer.main: " + re);
         } catch (MalformedURLException e) {
             System.out.println("MalformedURLException in RMIServer.main: " + e);
+        }
+        try {
+            RMIServer rmiMulticast = new RMIServer();
+            Naming.rebind("RMI_Multicast", rmiMulticast);
+            System.out.println("RMI Multicast is ready...");
+        } catch (RemoteException re) {
+            System.out.println("Exception in RMIMulticast.main: " + re);
+        } catch (MalformedURLException e) {
+            System.out.println("MalformedURLException in RMIMulticast.main: " + e);
         }
     }
 

@@ -1,3 +1,5 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.MulticastSocket;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -55,7 +57,7 @@ public class MulticastClient extends Thread {
 }
 
 class MulticastUser extends Thread {
-    private String MULTICAST_ADDRESS = "224.0.225.0";
+    private String MULTICAST_ADDRESS = "224.0.224.0";
     private int PORT = 4322;
 
     public MulticastUser() {
@@ -70,7 +72,18 @@ class MulticastUser extends Thread {
             Scanner keyboardScanner = new Scanner(System.in);
             while (true) {
                 String readKeyboard = keyboardScanner.nextLine();
-                byte[] buffer = readKeyboard.getBytes();
+
+                InputStreamReader input = new InputStreamReader(System.in);
+                BufferedReader reader = new BufferedReader(input);
+                String nome;
+                String pass;
+                System.out.println("LOGIN ");
+                System.out.print("Nome: ");
+                nome = reader.readLine();
+                System.out.print("password: ");
+                pass = reader.readLine();
+                String total = nome + "\n" +pass;
+                byte[] buffer = total.getBytes();
                 InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
                 socket.send(packet);

@@ -55,7 +55,7 @@ public class MulticastServer extends Thread implements Serializable {
         int sleep = 1000;
         while (true) {
             try {
-                rmi = (MulticastLibrary) Naming.lookup("RMI_Server");
+                rmi = (MulticastLibrary) Naming.lookup("rmi://localhost:7000/RMI_Server");
                 rmi.sayHello();
             } catch (Exception e) {
                 try {
@@ -77,7 +77,7 @@ public class MulticastServer extends Thread implements Serializable {
         MulticastServer server = new MulticastServer();
         server.start();
         try {
-            MulticastLibrary rmi = (MulticastLibrary) Naming.lookup("RMI_Server");
+            MulticastLibrary rmi = (MulticastLibrary) Naming.lookup("rmi://localhost:7000/RMI_Server");
             rmi.sayHello();
             MulticastServer multiserver = new MulticastServer(rmi);
             InputStreamReader input = new InputStreamReader(System.in);
@@ -142,10 +142,12 @@ public class MulticastServer extends Thread implements Serializable {
         this.listaEleicoes.add(e);
     }
 
-
-
     public Boolean getEstadoMesaVoto() {
         return estadoMesaVoto;
+    }
+
+    public void setEstadoMesaVoto(Boolean estadoMesaVoto) {
+        this.estadoMesaVoto = estadoMesaVoto;
     }
 }
 

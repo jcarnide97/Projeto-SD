@@ -584,7 +584,7 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
         int sleep = 1000;
         while (true) {
             try {
-                this.rmi = (ClientLibrary) Naming.lookup("RMI_Server");
+                this.rmi = (ClientLibrary) Naming.lookup("rmi://localhost:7000/RMI_Server");
                 this.rmi.sayHello();
             } catch (Exception e) {
                 try {
@@ -701,7 +701,7 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
 
     public static void main(String[] args) {
         try {
-            ClientLibrary rmi = (ClientLibrary) Naming.lookup("RMI_Server");
+            ClientLibrary rmi = (ClientLibrary) Naming.lookup("rmi://localhost:7000/RMI_Server");
             rmi.sayHello();
             AdminConsole adminConsole = new AdminConsole(rmi);
         } catch (Exception e) {

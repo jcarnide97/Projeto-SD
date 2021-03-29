@@ -1,5 +1,5 @@
 import java.io.*;
-import java.net.MalformedURLException;
+import java.net.*;
 import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
 import java.rmi.Remote;
@@ -11,6 +11,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import classes.*;
+
+import javax.xml.crypto.Data;
 
 public class RMIServer extends UnicastRemoteObject implements ServerLibrary, ClientLibrary,MulticastLibrary {
     private static final long serialVersionUID = 1L;
@@ -205,16 +207,100 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         }
     }
 
+    public void udpServerConnection() {
+        new Thread(new UDPServer()).start();
+    }
+
     public static void main(String[] args) throws RemoteException {
+        RMIServer rmiServer = null;
         try {
-            RMIServer rmiServer = new RMIServer();
-            Naming.rebind("RMI_Server", rmiServer);
-            System.out.println("RMI Server is ready...");
+            Registry rmiRegistry = LocateRegistry.createRegistry(7000);
+            rmiServer = new RMIServer();
+            for (MulticastServer mesa : rmiServer.mesasVoto) {
+                mesa.setEstadoMesaVoto(false);
+            }
+            rmiRegistry.rebind("RMI_Server", rmiServer);
+            rmiServer.udpServerConnection();
+            System.out.println("Primary RMI Server is ready...");
         } catch (RemoteException re) {
-            System.out.println("Exception in RMIServer.main: " + re);
-        } catch (MalformedURLException e) {
-            System.out.println("MalformedURLException in RMIServer.main: " + e);
+            System.out.println("Exception in Primary RMI Server: " + re.getMessage());
+            try {
+                DatagramSocket cSocket = null;
+                try {
+                    cSocket = new DatagramSocket();
+                    while (true) {
+                        InetAddress IPAddress = InetAddress.getByName("localhost");
+                        byte[] sendData;
+                        byte[] receiveData = new byte[1024];
+                        sendData = "ping".getBytes();
+                        DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 6000);
+                        cSocket.send(sendPacket);
+                        cSocket.setSoTimeout(5000);  // timeout de resposta do servidor primário de 5 segundos
+                        try {
+                            DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                            cSocket.receive(receivePacket);
+                            Thread.sleep(5000);
+                            String s = new String(receivePacket.getData(), 0, receivePacket.getLength());
+                            System.out.println("Primary RMI Server: " + s);
+                        } catch (SocketTimeoutException e) {
+                            cSocket.close();
+                            System.out.println("Timeout no Primary RMI Server: " + e.getMessage());
+                            try {
+                                rmiServer = new RMIServer();
+                                Registry rmiRegistry = LocateRegistry.createRegistry(7000);
+                                rmiRegistry.rebind("RMI_Server", rmiServer);
+                                rmiServer.udpServerConnection();
+                                System.out.println("Secondary RMI Server ready...");
+                            } catch (RemoteException re2) {
+                                System.out.println(re2.getMessage());
+                            }
+                        }
+                    }
+                } catch (SocketException e) {
+                    System.out.println("Socket: " + e.getMessage());
+                } catch (IOException e) {
+                    System.out.println("IO: " + e.getMessage());
+                } finally {
+                    if (cSocket != null) {
+                        cSocket.close();
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
+}
+
+class UDPServer implements Runnable {
+
+    public UDPServer() {
+    }
+
+    @Override
+    public void run() {
+        DatagramSocket aSocket = null;
+        try {
+            aSocket = new DatagramSocket(6000);
+            byte[] receiveData = new byte[1024];
+            byte[] sendData;
+            while (true) {
+                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                aSocket.receive(receivePacket);
+                String s = new String(receivePacket.getData());
+                sendData = "pong".getBytes();  // servidor primário envia msg a secundário a dizer que está tudo bem
+                DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, receivePacket.getAddress(), receivePacket.getPort());
+                aSocket.send(sendPacket);
+            }
+        } catch (SocketException e) {
+            System.out.println("Socket: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("IO: " + e.getMessage());
+        } finally {
+            if (aSocket != null) {
+                aSocket.close();
+            }
+        }
+    }
 }

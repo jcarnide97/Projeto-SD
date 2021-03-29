@@ -43,7 +43,6 @@ public class MulticastServer extends Thread implements Serializable {
             try {
                 verifica = rmi.userAuth(nome,numero);
                 System.out.println(verifica);
-
                 return verifica;
             } catch (RemoteException re) {
                 reconectarRMI();
@@ -176,7 +175,7 @@ class MulticastReceiver extends Thread{
                     Thread.sleep(sleep);
                     sleep *= 2;
                     if (sleep > 16000) {
-                        System.out.println("Avaria no RMI Multicast");
+                        System.out.println("Avaria no RMI Server");
                         exit(0);
                     }
                 } catch (InterruptedException ie) {

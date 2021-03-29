@@ -56,6 +56,7 @@ public class MulticastServer extends Thread implements Serializable {
             try {
                 rmi = (MulticastLibrary) Naming.lookup("rmi://localhost:7000/RMI_Server");
                 rmi.sayHello();
+                return;
             } catch (Exception e) {
                 try {
                     Thread.sleep(sleep);

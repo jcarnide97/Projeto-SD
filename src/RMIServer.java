@@ -250,7 +250,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
                                 Registry rmiRegistry = LocateRegistry.createRegistry(7000);
                                 rmiRegistry.rebind("RMI_Server", rmiServer);
                                 rmiServer.udpServerConnection();
-                                System.out.println("Secondary RMI Server ready...");
+                                System.out.println("Secondary RMI Server ready...\nNow I'm the Primary RMI Server");
                             } catch (RemoteException re2) {
                                 System.out.println(re2.getMessage());
                             }

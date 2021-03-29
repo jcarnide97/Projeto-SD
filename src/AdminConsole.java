@@ -586,6 +586,7 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
             try {
                 this.rmi = (ClientLibrary) Naming.lookup("rmi://localhost:7000/RMI_Server");
                 this.rmi.sayHello();
+                return;
             } catch (Exception e) {
                 try {
                     Thread.sleep(sleep);

@@ -92,10 +92,34 @@ public class MulticastServer extends Thread implements Serializable {
             numero = reader.readLine();
             ver = autenticacao(nome,numero);
             if(ver){
-               //desbloquear terminal durante 120 segundos
+                MulticastSocket socket = null;
+                try {
+                    socket = new MulticastSocket();  // create socket and bind it
+                    InetAddress group = InetAddress.getByName("224.0.224.0");
+                    socket.joinGroup(group);
+                    try {
+                        socket = new MulticastSocket();  // create socket without binding it (only for sending)
+                        String message = "unlock";
+                        byte[] buffer3 = message.getBytes();
+                        InetAddress group2 = InetAddress.getByName("224.0.224.0");
+                        DatagramPacket packet = new DatagramPacket(buffer3, buffer3.length, group, 4322);
+                        socket.send(packet);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } finally {
+                    socket.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    socket.close();
+                }
+                //desbloquear terminal durante 120 segundos
                 MulticastReceiver receiver = new MulticastReceiver();
                 receiver.start();
             }
+
+
 
         } catch (Exception e) {
             System.out.println("Exception in main MulticastServer: " + e.getMessage());
@@ -190,10 +214,8 @@ class MulticastReceiver extends Thread{
         boolean verifica;
         while (true) {
             try {
-                System.out.println("olaaaa");
                 verifica = rmi.userLogin(nome,pass);
                 System.out.println(verifica);
-
                 return verifica;
             } catch (RemoteException re) {
                 reconectarRMI();
@@ -206,32 +228,35 @@ class MulticastReceiver extends Thread{
         MulticastServer server = new MulticastServer();
         server.start();
         try {
-            MulticastLibrary rmi = (MulticastLibrary) Naming.lookup("RMI_Multicast");
+            MulticastLibrary rmi = (MulticastLibrary) Naming.lookup("rmi://localhost:7000/RMI_Server");
             rmi.sayHello();
             MulticastReceiver multiserver = new MulticastReceiver(rmi);
             try {
-                socket = new MulticastSocket(PORT);  // create socket and bind it
+                socket = new MulticastSocket(PORT);
                 InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
                 socket.joinGroup(group);
                 while (true) {
                     byte[] buffer = new byte[256];
-                    DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-                    socket.receive(packet);
-                    System.out.println("Received message from " + packet.getAddress().getHostAddress() + ":" + packet.getPort() + " with message:");
-                    String message = new String(packet.getData(), 0, packet.getLength());
+                    DatagramPacket packet2 = new DatagramPacket(buffer, buffer.length);
+                    socket.receive(packet2);
+                    System.out.println("Received message from " + packet2.getAddress().getHostAddress() + ":" + packet2.getPort() + " with message:");
+                    String message = new String(packet2.getData(), 0, packet2.getLength());
                     System.out.println(message);
                     String [] login=message.split("\n");
                     boolean condicao = autenticacao(login[0],login[1]);
+                    String resposta;
                     if(condicao){
                         System.out.println("Utilizador "+login[0]+" vai votar!");
+                        resposta = "Logado!\nMostrar Eleições:";
                     }
                     else{
                         System.out.println("Erro no login!");
+                        resposta = "Erro no login!";
                     }
-                    String resposta = "CONFIRMADO!";
-                    packet.setData(resposta.getBytes());
-                    DatagramPacket reply = new DatagramPacket(packet.getData(),packet.getLength(), packet.getAddress(), packet.getPort());
+                    packet2.setData(resposta.getBytes());
+                    DatagramPacket reply = new DatagramPacket(packet2.getData(),packet2.getLength(), packet2.getAddress(), packet2.getPort());
                     socket.send(reply);
+                    break;
                 }
             } catch (IOException e) {
                 e.printStackTrace();

@@ -44,6 +44,7 @@ public class MulticastClient extends Thread {
             String message = new String(packet.getData(), 0, packet.getLength());
             System.out.println(message);
             if(message.equals("Connected to Multicast server")){
+
                 MulticastUser user = new MulticastUser();
                 user.start();
             }
@@ -59,6 +60,7 @@ public class MulticastClient extends Thread {
 class MulticastUser extends Thread {
     private String MULTICAST_ADDRESS = "224.0.224.0";
     private int PORT = 4322;
+    private String state = "locked";
 
     public MulticastUser() {
         super("User " + (long) (Math.random() * 1000));
@@ -68,34 +70,49 @@ class MulticastUser extends Thread {
         MulticastSocket socket = null;
         System.out.println(this.getName() + " ready...");
         try {
-            socket = new MulticastSocket();  // create socket without binding it (only for sending)
+            socket = new MulticastSocket(PORT);  // create socket without binding it (only for sending)
             Scanner keyboardScanner = new Scanner(System.in);
+            String newState;
             while (true) {
-                String readKeyboard = keyboardScanner.nextLine();
+                newState = "lock";
+                socket = new MulticastSocket(PORT);  // create socket and bind it
+                InetAddress group2 = InetAddress.getByName(MULTICAST_ADDRESS);
+                socket.joinGroup(group2);
+                byte[] buffer3 = new byte[256];
+                DatagramPacket packet2 = new DatagramPacket(buffer3, buffer3.length);
+                socket.receive(packet2);
+                newState = new String(packet2.getData(), 0, packet2.getLength());
+                System.out.println(newState);
 
-                InputStreamReader input = new InputStreamReader(System.in);
-                BufferedReader reader = new BufferedReader(input);
-                String nome;
-                String pass;
-                System.out.println("LOGIN ");
-                System.out.print("Nome: ");
-                nome = reader.readLine();
-                System.out.print("password: ");
-                pass = reader.readLine();
-                String total = nome + "\n" +pass;
-                byte[] buffer = total.getBytes();
-                InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
-                DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
-                socket.send(packet);
-                byte[] buffer2 = new byte[1000];
-                DatagramPacket reply = new DatagramPacket(buffer2, buffer2.length);
-                try {
-                    socket.receive(reply);
-                    System.out.println(new String(reply.getData(), 0, reply.getLength()));
-                } catch (SocketTimeoutException e) {
-                    System.out.println("À espera que algo aconteça...");
-                    continue;
+                if(newState.equals("unlock")){
+                    System.out.println("newState");
+                    socket = new MulticastSocket();
+                    String readKeyboard = keyboardScanner.nextLine();
+                    InputStreamReader input = new InputStreamReader(System.in);
+                    BufferedReader reader = new BufferedReader(input);
+                    String nome;
+                    String pass;
+                    System.out.println("LOGIN ");
+                    System.out.print("Nome: ");
+                    nome = reader.readLine();
+                    System.out.print("password: ");
+                    pass = reader.readLine();
+                    String total = nome + "\n" +pass;
+                    byte[] buffer = total.getBytes();
+                    InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+                    DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
+                    socket.send(packet);
+                    byte[] buffer2 = new byte[1000];
+                    DatagramPacket reply = new DatagramPacket(buffer2, buffer2.length);
+                    try {
+                        socket.receive(reply);
+                        System.out.println(new String(reply.getData(), 0, reply.getLength()));
+                    } catch (SocketTimeoutException e) {
+                        System.out.println("À espera que algo aconteça...");
+                        continue;
+                    }
                 }
+
             }
         } catch (IOException e) {
             e.printStackTrace();

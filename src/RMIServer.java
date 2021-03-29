@@ -119,14 +119,14 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
     }
 
     public boolean userAuth(String nome, String numero) throws RemoteException {
-        System.out.println("Autenticar " + nome + "na database...");
+        System.out.println("Autenticar " + nome + " na database...");
         boolean valido;
         valido = usersAuth2.containsKey(nome) && usersAuth2.get(nome).equals(numero);
         return valido;
     }
 
     public boolean userLogin(String nome, String password) throws RemoteException {
-        System.out.println("Verificar " + nome + "na database...");
+        System.out.println("Verificar " + nome + " na database...");
         boolean valido;
         valido = usersAuth.containsKey(nome) && usersAuth.get(nome).equals(password);
         if (valido) {

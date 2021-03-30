@@ -16,5 +16,6 @@ public interface ServerLibrary extends Remote {
     public void removeEleicao(int i) throws RemoteException;
     public ArrayList<MulticastServer> getMesasVoto() throws RemoteException;
     public void addMesaVoto(MulticastServer mesaVoto) throws RemoteException;
+    public void atualizaMesaVoto(MulticastServer mesaVoto,boolean newState) throws RemoteException;
     public void removeMesaVoto(int i) throws RemoteException;
 }

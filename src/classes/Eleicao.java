@@ -38,6 +38,14 @@ public class Eleicao implements Serializable {
         this.listaCandidatas.add(new ListaCandidata("Voto Nulo"));
     }
 
+    public ArrayList<Departamento> getListaDepartamento(){
+        return this.listaDepartamento;
+    }
+
+    public void addDepartamento (Departamento dep){
+        this.listaDepartamento.add(dep);
+    }
+
     public Date getDataComeco() {
         return dataComeco;
     }

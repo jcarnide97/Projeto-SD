@@ -83,6 +83,9 @@ public class MulticastServer extends Thread implements Serializable {
             rmi.sayHello();
             ArrayList<Eleicao> eleicoes = new ArrayList<>();
             boolean flagEleicoes = false;
+            boolean flagDeps = false;
+            boolean flagEscolhas = false;
+            MulticastServer mesaOficial;
             while (true) {
                 try {
                     eleicoes = rmi.getListaEleicoes();
@@ -104,7 +107,7 @@ public class MulticastServer extends Thread implements Serializable {
                 i++;
             }
 
-            boolean flagDeps = false;
+
             if(flagEleicoes){
                 System.out.println("Eleicao para associar maquina:");
                 Scanner sc = new Scanner(System.in);
@@ -125,13 +128,15 @@ public class MulticastServer extends Thread implements Serializable {
                     }
                 }
                 if (deps.isEmpty()) {
-                    System.out.println("Não existem departamentos associados!");
+                    System.out.println("Não existem mesas de voto associadas!");
                 }
                 else{
                     flagDeps=true;
                 }
                 i=0;
                 Map<Integer, MulticastServer> indicesMesas=new HashMap<Integer, MulticastServer>();
+                System.out.println("Associar mesa de voto!");
+
                 for (MulticastServer dep : deps) {
                     boolean aux = false;
                     for(Eleicao eles : dep.getListaEleicoes()){
@@ -151,11 +156,22 @@ public class MulticastServer extends Thread implements Serializable {
                     System.out.print(">>> ");
                     opcaoDep = sc.nextInt();
                 } while (!indicesMesas.containsKey(opcaoDep));
-
                 System.out.println(indicesMesas.get(opcaoDep).getDepartamento().getNome()+" escolhido!");
+                MulticastServer mesaEscolhida  = indicesMesas.get(opcaoDep);
+                if (!mesaEscolhida.estadoMesaVoto){
+                    rmi.atualizaMesaVoto(mesaEscolhida,true);
+                    mesaEscolhida.setEstadoMesaVoto(true);
+                    mesaOficial = mesaEscolhida;
+                }
+                else{
+                    flagEscolhas = true;
+                    System.out.println("Mesa a ser utilizada!");
+                }
+
+
             }
 
-            if(flagEleicoes && flagDeps){
+            if(flagEleicoes && flagDeps && !flagEscolhas){
                 MulticastServer multiserver = new MulticastServer(rmi);
 
                 InputStreamReader input = new InputStreamReader(System.in);

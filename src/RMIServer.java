@@ -63,6 +63,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
     synchronized public void sayHello() throws RemoteException {
         System.out.println("print do lado do servidor...");
     }
+
     synchronized public void addDepartamento(Departamento dep) {
        this.listaDepartamentos.add(dep);
        guardaDatabase();
@@ -110,6 +111,17 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
 
     synchronized public void addMesaVoto(MulticastServer mesaVoto) {
         mesasVoto.add(mesaVoto);
+        guardaDatabase();
+    }
+
+    synchronized public void atualizaMesaVoto(MulticastServer mesaVoto,boolean newState) {
+        for(MulticastServer mesa:mesasVoto){
+            if(mesa.getDepartamento().getNome().equals(mesaVoto.getDepartamento().getNome())){
+                System.out.println("wei mestre");
+                mesa.setEstadoMesaVoto(newState);
+                break;
+            }
+        }
         guardaDatabase();
     }
 

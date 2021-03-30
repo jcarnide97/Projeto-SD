@@ -117,7 +117,6 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
     synchronized public void atualizaMesaVoto(MulticastServer mesaVoto,boolean newState) {
         for(MulticastServer mesa:mesasVoto){
             if(mesa.getDepartamento().getNome().equals(mesaVoto.getDepartamento().getNome())){
-                System.out.println("wei mestre");
                 mesa.setEstadoMesaVoto(newState);
                 break;
             }

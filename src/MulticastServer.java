@@ -85,7 +85,7 @@ public class MulticastServer extends Thread implements Serializable {
             boolean flagEleicoes = false;
             boolean flagDeps = false;
             boolean flagEscolhas = false;
-            MulticastServer mesaOficial;
+            MulticastServer mesaOficial = null;
             while (true) {
                 try {
                     eleicoes = rmi.getListaEleicoes();
@@ -172,6 +172,22 @@ public class MulticastServer extends Thread implements Serializable {
             }
 
             if(flagEleicoes && flagDeps && !flagEscolhas){
+                MulticastServer finalMesaOficial = mesaOficial;
+                Runtime.getRuntime().addShutdownHook(new Thread(){
+                    @Override
+                    public void run() {
+                        if (finalMesaOficial !=null ){
+                            try {
+                                rmi.atualizaMesaVoto(finalMesaOficial,false);
+                                System.out.println("\nLibertada a mesa do departamento: "+finalMesaOficial.getDepartamento().getNome());
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }
+                });
+
                 MulticastServer multiserver = new MulticastServer(rmi);
 
                 InputStreamReader input = new InputStreamReader(System.in);

@@ -9,6 +9,8 @@ import java.nio.charset.StandardCharsets;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.io.InputStreamReader;
 import classes.*;
@@ -79,47 +81,123 @@ public class MulticastServer extends Thread implements Serializable {
         try {
             MulticastLibrary rmi = (MulticastLibrary) Naming.lookup("rmi://localhost:7000/RMI_Server");
             rmi.sayHello();
-            MulticastServer multiserver = new MulticastServer(rmi);
-            InputStreamReader input = new InputStreamReader(System.in);
-            BufferedReader reader = new BufferedReader(input);
-            String nome;
-            String numero;
-            boolean ver;
-            System.out.println("AUTENTICAR UTILIZADOR ");
-            System.out.print("Nome: ");
-            nome = reader.readLine();
-            System.out.print("Numero: ");
-            numero = reader.readLine();
-            ver = autenticacao(nome,numero);
-            if(ver){
-                MulticastSocket socket = null;
+            ArrayList<Eleicao> eleicoes = new ArrayList<>();
+            boolean flagEleicoes = false;
+            while (true) {
                 try {
-                    socket = new MulticastSocket();  // create socket and bind it
-                    InetAddress group = InetAddress.getByName("224.0.224.0");
-                    socket.joinGroup(group);
+                    eleicoes = rmi.getListaEleicoes();
+                    break;
+                } catch (RemoteException re) {
+                    reconectarRMI();
+                }
+            }
+
+            if (eleicoes.isEmpty()) {
+                System.out.println("Não exitem eleições!");
+            }
+            else{
+                flagEleicoes=true;
+            }
+            int i=0;
+            for (Eleicao ele : eleicoes) {
+                System.out.println("["+i+"]"+ele.getTitulo());
+                i++;
+            }
+
+            boolean flagDeps = false;
+            if(flagEleicoes){
+                System.out.println("Eleicao para associar maquina:");
+                Scanner sc = new Scanner(System.in);
+                int opcaoEleicao;
+                do {
+                    System.out.print(">>> ");
+                    opcaoEleicao = sc.nextInt();
+                } while (opcaoEleicao < 0 || opcaoEleicao > eleicoes.size()-1);
+                eleicoes.get(opcaoEleicao).printEleicao();
+
+                ArrayList<MulticastServer> deps;
+                while (true) {
                     try {
-                        socket = new MulticastSocket();  // create socket without binding it (only for sending)
-                        String message = "unlock";
-                        byte[] buffer3 = message.getBytes();
-                        InetAddress group2 = InetAddress.getByName("224.0.224.0");
-                        DatagramPacket packet = new DatagramPacket(buffer3, buffer3.length, group, 4322);
-                        socket.send(packet);
+                        deps = rmi.getMesasVoto();
+                        break;
+                    } catch (RemoteException re) {
+                        reconectarRMI();
+                    }
+                }
+                if (deps.isEmpty()) {
+                    System.out.println("Não existem departamentos associados!");
+                }
+                else{
+                    flagDeps=true;
+                }
+                i=0;
+                Map<Integer, MulticastServer> indicesMesas=new HashMap<Integer, MulticastServer>();
+                for (MulticastServer dep : deps) {
+                    boolean aux = false;
+                    for(Eleicao eles : dep.getListaEleicoes()){
+                        if (eles.getTitulo().equals(eleicoes.get(opcaoEleicao).getTitulo())){
+                            aux = true;
+                            break;
+                        }
+                    }
+                    if(aux){
+                        indicesMesas.put(i,dep);
+                        System.out.println("["+i+"] "+dep.getDepartamento().getNome());
+                    }
+                    i++;
+                }
+                int opcaoDep;
+                do {
+                    System.out.print(">>> ");
+                    opcaoDep = sc.nextInt();
+                } while (!indicesMesas.containsKey(opcaoDep));
+
+                System.out.println(indicesMesas.get(opcaoDep).getDepartamento().getNome()+" escolhido!");
+            }
+
+            if(flagEleicoes && flagDeps){
+                MulticastServer multiserver = new MulticastServer(rmi);
+
+                InputStreamReader input = new InputStreamReader(System.in);
+                BufferedReader reader = new BufferedReader(input);
+
+                String nome;
+                String numero;
+                boolean ver;
+                System.out.println("AUTENTICAR UTILIZADOR ");
+                System.out.print("Nome: ");
+                nome = reader.readLine();
+                System.out.print("Numero: ");
+                numero = reader.readLine();
+                ver = autenticacao(nome,numero);
+                if(ver){
+                    MulticastSocket socket = null;
+                    try {
+                        socket = new MulticastSocket();  // create socket and bind it
+                        InetAddress group = InetAddress.getByName("224.0.224.0");
+                        socket.joinGroup(group);
+                        try {
+                            socket = new MulticastSocket();  // create socket without binding it (only for sending)
+                            String message = "unlock";
+                            byte[] buffer3 = message.getBytes();
+                            InetAddress group2 = InetAddress.getByName("224.0.224.0");
+                            DatagramPacket packet = new DatagramPacket(buffer3, buffer3.length, group, 4322);
+                            socket.send(packet);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } finally {
+                            socket.close();
+                        }
                     } catch (IOException e) {
                         e.printStackTrace();
                     } finally {
-                    socket.close();
+                        socket.close();
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    socket.close();
+                    //desbloquear terminal durante 120 segundos
+                    MulticastReceiver receiver = new MulticastReceiver();
+                    receiver.start();
                 }
-                //desbloquear terminal durante 120 segundos
-                MulticastReceiver receiver = new MulticastReceiver();
-                receiver.start();
             }
-
-
 
         } catch (Exception e) {
             System.out.println("Exception in main MulticastServer: " + e.getMessage());

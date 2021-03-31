@@ -1,13 +1,12 @@
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
+import java.net.*;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.MulticastSocket;
 import java.nio.charset.StandardCharsets;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -333,7 +332,7 @@ class MulticastReceiver extends Thread{
         }
     }
 
-    public void run() {
+    public void run(){
         MulticastSocket socket = null;
         MulticastServer server = new MulticastServer();
         server.start();
@@ -345,33 +344,47 @@ class MulticastReceiver extends Thread{
                 socket = new MulticastSocket(PORT);
                 InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
                 socket.joinGroup(group);
-                while (true) {
-                    byte[] buffer = new byte[256];
-                    DatagramPacket packet2 = new DatagramPacket(buffer, buffer.length);
-                    socket.receive(packet2);
-                    System.out.println("Received message from " + packet2.getAddress().getHostAddress() + ":" + packet2.getPort() + " with message:");
-                    String message = new String(packet2.getData(), 0, packet2.getLength());
-                    System.out.println(message);
-                    String [] login=message.split("\n");
-                    boolean condicao = autenticacao(login[0],login[1]);
-                    String resposta;
-                    if(condicao){
-                        System.out.println("Utilizador "+login[0]+" vai votar!");
-                        resposta = "Logado!\nMostrar Eleições:";
+                socket.setSoTimeout(5 * 1000);
+                try{
+                    while (true) {
+                        byte[] buffer = new byte[256];
+                        DatagramPacket packet2 = new DatagramPacket(buffer, buffer.length);
+                        socket.receive(packet2);
+                        System.out.println("Received message from " + packet2.getAddress().getHostAddress() + ":" + packet2.getPort() + " with message:");
+                        String message = new String(packet2.getData(), 0, packet2.getLength());
+                        System.out.println(message);
+                        String [] login=message.split("\n");
+                        boolean condicao = autenticacao(login[0],login[1]);
+                        String resposta;
+                        if(condicao){
+                            System.out.println("Utilizador "+login[0]+" vai votar!");
+                            resposta = "Logado!\nMostrar Eleições:";
+                        }
+                        else{
+                            System.out.println("Erro no login!");
+                            resposta = "Erro no login!";
+                        }
+                        packet2.setData(resposta.getBytes());
+                        DatagramPacket reply = new DatagramPacket(packet2.getData(),packet2.getLength(), packet2.getAddress(), packet2.getPort());
+                        socket.send(reply);
+                        break;
                     }
-                    else{
-                        System.out.println("Erro no login!");
-                        resposta = "Erro no login!";
-                    }
-                    packet2.setData(resposta.getBytes());
-                    DatagramPacket reply = new DatagramPacket(packet2.getData(),packet2.getLength(), packet2.getAddress(), packet2.getPort());
-                    socket.send(reply);
-                    break;
+                }catch (SocketTimeoutException e){
+                    String message = "timeout";
+                    byte[] buffer3 = message.getBytes();
+                    InetAddress group2 = InetAddress.getByName("224.0.224.0");
+                    DatagramPacket packet = new DatagramPacket(buffer3, buffer3.length, group, 4322);
+                    socket.send(packet);
+                    System.out.println("aqui");
                 }
+
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                socket.close();
+                if(socket!=null){
+                    socket.close();
+                }
+
             }
 
         } catch (Exception e) {

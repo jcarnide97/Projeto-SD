@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.sql.SQLOutput;
 import java.util.Scanner;
 import classes.*;
 
@@ -73,47 +74,59 @@ class MulticastUser extends Thread {
             socket = new MulticastSocket(PORT);  // create socket without binding it (only for sending)
             Scanner keyboardScanner = new Scanner(System.in);
             String newState;
-            while (true) {
-                newState = "lock";
-                socket = new MulticastSocket(PORT);  // create socket and bind it
-                InetAddress group2 = InetAddress.getByName(MULTICAST_ADDRESS);
-                socket.joinGroup(group2);
-                byte[] buffer3 = new byte[256];
-                DatagramPacket packet2 = new DatagramPacket(buffer3, buffer3.length);
-                socket.receive(packet2);
-                newState = new String(packet2.getData(), 0, packet2.getLength());
-                System.out.println(newState);
+            while(true){
+                while (true) {
+                    newState = "lock";
+                    socket = new MulticastSocket(PORT);  // create socket and bind it
+                    InetAddress group2 = InetAddress.getByName(MULTICAST_ADDRESS);
+                    socket.joinGroup(group2);
+                    byte[] buffer3 = new byte[256];
+                    DatagramPacket packet2 = new DatagramPacket(buffer3, buffer3.length);
+                    socket.receive(packet2);
+                    newState = new String(packet2.getData(), 0, packet2.getLength());
+                    System.out.println(newState);
 
-                if(newState.equals("unlock")){
-                    System.out.println("newState");
-                    socket = new MulticastSocket();
-                    String readKeyboard = keyboardScanner.nextLine();
-                    InputStreamReader input = new InputStreamReader(System.in);
-                    BufferedReader reader = new BufferedReader(input);
-                    String nome;
-                    String pass;
-                    System.out.println("LOGIN ");
-                    System.out.print("Nome: ");
-                    nome = reader.readLine();
-                    System.out.print("password: ");
-                    pass = reader.readLine();
-                    String total = nome + "\n" +pass;
-                    byte[] buffer = total.getBytes();
-                    InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
-                    DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
-                    socket.send(packet);
-                    byte[] buffer2 = new byte[1000];
-                    DatagramPacket reply = new DatagramPacket(buffer2, buffer2.length);
-                    try {
-                        socket.receive(reply);
-                        System.out.println(new String(reply.getData(), 0, reply.getLength()));
-                    } catch (SocketTimeoutException e) {
-                        System.out.println("À espera que algo aconteça...");
-                        continue;
+                    if(newState.equals("unlock")){
+                        socket = new MulticastSocket();
+                        InputStreamReader input = new InputStreamReader(System.in);
+                        BufferedReader reader = new BufferedReader(input);
+                        String nome;
+                        String pass;
+                        System.out.println("LOGIN ");
+                        System.out.print("Nome: ");
+                        long startTime = System.currentTimeMillis();
+                        while((System.currentTimeMillis() - startTime)<5000 && !reader.ready()){}
+                        if((System.currentTimeMillis() - startTime)<5000 && reader.ready()){
+                            nome = reader.readLine();
+                        }
+                        else{
+                            break;
+                        }
+
+                        System.out.print("password: ");
+                        pass = reader.readLine();
+                        String total = nome + "\n" +pass;
+                        byte[] buffer = total.getBytes();
+                        InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+                        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
+                        socket.send(packet);
+                        byte[] buffer2 = new byte[1000];
+                        DatagramPacket reply = new DatagramPacket(buffer2, buffer2.length);
+                        try {
+                            socket.receive(reply);
+                            System.out.println(new String(reply.getData(), 0, reply.getLength()));
+                        } catch (SocketTimeoutException e) {
+                            System.out.println("À espera que algo aconteça...");
+                            continue;
+                        }
                     }
-                }
+                    else{
+                        System.out.println("Terminal bloqueado!\n============\n============\n============\n============");
+                    }
 
+                }
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

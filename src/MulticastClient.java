@@ -41,8 +41,13 @@ public class MulticastClient extends Thread {
             byte[] buffer = new byte[256];
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
             socket.receive(packet);
-            System.out.println("Received message from " + packet.getAddress().getHostAddress() + ":" + packet.getPort() + " with message:");
             String message = new String(packet.getData(), 0, packet.getLength());
+
+            byte[] buffer2 = "okay".getBytes();
+
+            DatagramPacket packet2 = new DatagramPacket(buffer2, buffer2.length, group, PORT);
+            socket.send(packet2);
+
             MulticastUser user = new MulticastUser(message);
             user.start();
 
@@ -58,26 +63,26 @@ public class MulticastClient extends Thread {
 class MulticastUser extends Thread {
     private String MULTICAST_ADDRESS = "224.0.224.0";
     private String groupAddr;
-    private int PORT = 4322;
+    private int port;
     private String state = "locked";
 
-    public MulticastUser(String groupAddr) {
-        this.groupAddr = groupAddr;
-        System.out.println("Vou conectar-me ao endereço: "+groupAddr);
+    public MulticastUser(String mensagem) {
+        this.groupAddr = mensagem.split(",")[0];
+        this.port=Integer.parseInt(mensagem.split(",")[1]);
+        System.out.println("Vou conectar-me ao endereço: "+this.groupAddr+"\nporto: "+this.port);
     }
 
     public void run() {
         MulticastSocket socket = null;
         System.out.println(this.getName() + " ready...");
         try {
-            socket = new MulticastSocket(PORT);  // create socket without binding it (only for sending)
+            socket = new MulticastSocket(port);  // create socket without binding it (only for sending)
             //Scanner keyboardScanner = new Scanner(System.in);
             String newState;
-            System.out.println("ola");
             while(true){
                 while (true) {
                     newState = "lock";
-                    socket = new MulticastSocket(PORT);  // create socket and bind it
+                    socket = new MulticastSocket(port);  // create socket and bind it
                     InetAddress group = InetAddress.getByName(this.groupAddr);
                     socket.joinGroup(group);
                     byte[] buffer3 = new byte[256];
@@ -85,7 +90,6 @@ class MulticastUser extends Thread {
                     socket.receive(packet2);
                     newState = new String(packet2.getData(), 0, packet2.getLength());
                     System.out.println(newState);
-                    socket.leaveGroup(group);
 
                     if(newState.equals("unlock")){
                         socket = new MulticastSocket();
@@ -115,15 +119,12 @@ class MulticastUser extends Thread {
                         byte[] buffer = total.getBytes();
                         group = InetAddress.getByName(this.groupAddr);
                         socket.joinGroup(group);
-                        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
+                        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, port);
                         socket.send(packet);
-                        socket.leaveGroup(group);
                         byte[] buffer2 = new byte[1000];
                         DatagramPacket reply = new DatagramPacket(buffer2, buffer2.length);
-                        socket.joinGroup(group);
                         try {
                             socket.receive(reply);
-                            socket.leaveGroup(group);
                             System.out.println(new String(reply.getData(), 0, reply.getLength()));
 
                             break;

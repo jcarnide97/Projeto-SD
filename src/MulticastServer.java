@@ -25,8 +25,8 @@ public class MulticastServer extends Thread implements Serializable {
     private Departamento departamento;
     private ArrayList<Eleicao> listaEleicoes;
     private Boolean estadoMesaVoto;
-    private String address_group;
-    public Boolean [] terminais;
+    public Boolean [] auxterminais;
+    public Boolean[] terminais;
     static MulticastLibrary rmi;
     private int unlocks = 0;
 
@@ -81,10 +81,11 @@ public class MulticastServer extends Thread implements Serializable {
 
     public static void main(String[] args) {
         MulticastServer server = new MulticastServer();
-        server.start();
+
         try {
-            MulticastLibrary rmi = (MulticastLibrary) Naming.lookup("rmi://localhost:7000/RMI_Server");
+            rmi = (MulticastLibrary) Naming.lookup("rmi://localhost:7000/RMI_Server");
             rmi.sayHello();
+
             ArrayList<Eleicao> eleicoes = new ArrayList<>();
             boolean flagEleicoes = false;
             boolean flagDeps = false;
@@ -167,6 +168,25 @@ public class MulticastServer extends Thread implements Serializable {
                     mesaEscolhida.setEstadoMesaVoto(true);
                     mesaOficial = mesaEscolhida;
                     rmi.setEndereco(mesaOficial,groupAddr);
+                    server.start();
+                    /// LIBERTAR MESA DE VOTO
+                    MulticastServer finalMesaOficial = mesaOficial;
+                    Runtime.getRuntime().addShutdownHook(new Thread(){
+                        @Override
+                        public void run() {
+                            if (finalMesaOficial !=null ){
+                                try {
+                                    rmi.atualizaMesaVoto(finalMesaOficial,false);
+                                    System.out.println("\nLibertada a mesa do departamento: "+finalMesaOficial.getDepartamento().getNome());
+                                } catch (RemoteException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        }
+                    });
+
+
                     MulticastServer multiserver = new MulticastServer(rmi);
                     InputStreamReader input = new InputStreamReader(System.in);
                     BufferedReader reader = new BufferedReader(input);
@@ -174,7 +194,7 @@ public class MulticastServer extends Thread implements Serializable {
                     String numero;
                     boolean ver;
                     System.out.println("AUTENTICAR UTILIZADOR ");
-                    System.out.print("Nome: ");
+                    System.out.print("\nNome: ");
                     nome = reader.readLine();
                     System.out.print("Numero: ");
                     numero = reader.readLine();
@@ -187,10 +207,32 @@ public class MulticastServer extends Thread implements Serializable {
                             socket.joinGroup(group);
                             try {
                                 socket = new MulticastSocket();  // create socket without binding it (only for sending)
+
                                 String message = "unlock";
                                 byte[] buffer3 = message.getBytes();
                                 InetAddress group2 = InetAddress.getByName(groupAddr);
-                                DatagramPacket packet = new DatagramPacket(buffer3, buffer3.length, group, 4322);
+                                int portinho = 4321;
+                                ArrayList<MulticastServer> mesas2;
+                                while (true) {
+                                    try {
+                                        mesas2 = rmi.getMesasVoto();
+                                        break;
+                                    } catch (RemoteException re) {
+                                        reconectarRMI();
+                                    }
+                                }
+                                for(MulticastServer mesa: mesas2){
+                                    if(mesa.groupAddr.equals(groupAddr)){
+                                        if(!mesa.terminais[0]){
+                                            portinho = 4321;
+                                        }
+                                        else if(!mesa.terminais[1]){
+                                            portinho = 4322;
+                                        }
+                                        break;
+                                    }
+                                }
+                                DatagramPacket packet = new DatagramPacket(buffer3, buffer3.length, group, portinho);
                                 socket.send(packet);
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -203,32 +245,45 @@ public class MulticastServer extends Thread implements Serializable {
                             socket.close();
                         }
                         //desbloquear terminal durante 120 segundos
-                        System.out.println(groupAddr);
-                        MulticastReceiver receiver = new MulticastReceiver(groupAddr);
-                        receiver.start();
+
+                        ArrayList<MulticastServer> mesas;
+                        while (true) {
+                            try {
+                                mesas = rmi.getMesasVoto();
+                                break;
+                            } catch (RemoteException re) {
+                                reconectarRMI();
+                            }
+                        }
+                        Boolean[] terminaisUsados;
+                        for(MulticastServer mesa: mesas){
+                            if(mesa.groupAddr.equals(groupAddr)){
+                                terminaisUsados = mesa.terminais;
+                                if(!terminaisUsados[0]){
+                                    terminaisUsados[0]=true;
+                                    rmi.atualizaTerminais(mesa,terminaisUsados);
+                                    MulticastReceiver receiver = new MulticastReceiver(groupAddr,4321);
+                                    receiver.start();
+                                }
+                                else if(!terminaisUsados[1]){
+                                    terminaisUsados[1]=true;
+                                    rmi.atualizaTerminais(mesa,terminaisUsados);
+                                    MulticastReceiver receiver = new MulticastReceiver(groupAddr,4322);
+                                    receiver.start();
+                                }
+                                break;
+                            }
+                        }
+
+
+
+
                 }
                 else{
                     flagEscolhas = true;
                     System.out.println("Mesa a ser utilizada!");
                 }
             }
-            if(flagEleicoes && flagDeps && !flagEscolhas){
-                MulticastServer finalMesaOficial = mesaOficial;
-                Runtime.getRuntime().addShutdownHook(new Thread(){
-                    @Override
-                    public void run() {
-                        if (finalMesaOficial !=null ){
-                            try {
-                                rmi.atualizaMesaVoto(finalMesaOficial,false);
-                                System.out.println("\nLibertada a mesa do departamento: "+finalMesaOficial.getDepartamento().getNome());
-                            } catch (RemoteException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                    }
-                });
-                }
             }
 
         } catch (Exception e) {
@@ -242,18 +297,125 @@ public class MulticastServer extends Thread implements Serializable {
     public MulticastServer() {
         super("Server " + (long) (Math.random() * 1000));
     }
+
     public void run() {
         MulticastSocket socket = null;
-        long counter = 0;
-        System.out.println(this.getName() + " running...");
+
         try {
             socket = new MulticastSocket();  // create socket without binding it (only for sending)
             this.groupAddr=String.valueOf((int)(Math.random()*(239-225 + 1)+225))+"."+String.valueOf((int)(Math.random()*(255-0 + 1)+0))+"."+String.valueOf((int)(Math.random()*(255-0 + 1)+0))+"."+String.valueOf((int)(Math.random()*(255-1 + 1)+1));
+
             while (true) {
-                byte[] buffer = this.groupAddr.getBytes();
-                InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
-                DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
-                socket.send(packet);
+                ArrayList<MulticastServer> mesasTotal;
+                while (true) {
+                    try {
+                        mesasTotal = rmi.getMesasVoto();
+                        break;
+                    } catch (RemoteException re) {
+                        reconectarRMI();
+                    }
+                }
+                Boolean [] termLigados = new Boolean[0];
+
+                for(MulticastServer mesa: mesasTotal){
+                    if(mesa.groupAddr.equals(this.groupAddr)){
+                        termLigados=mesa.auxterminais;
+                        break;
+                    }
+                }
+                if(!termLigados[0]&&!termLigados[1]){
+
+                    int porto = 4321;
+                    byte[] buffer = (this.groupAddr+","+porto).getBytes();
+                    InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+                    DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
+                    socket.send(packet);
+
+                    MulticastSocket socket2 = null;
+                    socket2 = new MulticastSocket(PORT);
+                    socket2.joinGroup(group);
+
+                    DatagramPacket packet2 = new DatagramPacket(buffer, buffer.length);
+                    socket2.setSoTimeout(1000);
+                    try{
+                        socket2.receive(packet2);
+                        socket2.leaveGroup(group);
+                        socket2.close();
+                        String message = new String(packet2.getData(), 0, packet2.getLength());
+                        if (message.equals("okay")){
+
+                            ArrayList<MulticastServer> mesasTotal2 = rmi.getMesasVoto();
+                            for(MulticastServer mesa: mesasTotal2){
+                                if(mesa.groupAddr.equals(this.groupAddr)){
+                                    rmi.setLigados(mesa,0,true);
+                                    break;
+                                }
+                            }
+                        }
+                    }catch (SocketTimeoutException e){}
+
+                }
+                else if(termLigados[0]&&!termLigados[1]){
+                    int porto = 4322;
+
+                    byte[] buffer = (this.groupAddr+","+porto).getBytes();
+                    InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+                    DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
+                    socket.send(packet);
+
+                    MulticastSocket socket2 = null;
+                    socket2 = new MulticastSocket(PORT);
+                    socket2.joinGroup(group);
+
+                    DatagramPacket packet2 = new DatagramPacket(buffer, buffer.length);
+                    socket2.setSoTimeout(1000);
+                    try{
+                        socket2.receive(packet2);
+                        socket2.leaveGroup(group);
+                        socket2.close();
+                        String message = new String(packet2.getData(), 0, packet2.getLength());
+                        if (message.equals("okay")){
+                            ArrayList<MulticastServer> mesasTotal2 = rmi.getMesasVoto();
+                            for(MulticastServer mesa: mesasTotal2){
+                                if(mesa.groupAddr.equals(this.groupAddr)){
+                                    rmi.setLigados(mesa,1,true);
+                                    break;
+                                }
+                            }
+                        }
+                    }catch (SocketTimeoutException e){}
+
+                }
+                else if(!termLigados[0]&&termLigados[1]){
+
+                    int porto = 4321;
+                    byte[] buffer = (this.groupAddr+","+porto).getBytes();
+                    InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+                    DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
+                    socket.send(packet);
+
+                    MulticastSocket socket2 = null;
+                    socket2 = new MulticastSocket(PORT);
+                    socket2.joinGroup(group);
+
+                    DatagramPacket packet2 = new DatagramPacket(buffer, buffer.length);
+                    socket2.setSoTimeout(1000);
+                    try{
+                        socket2.receive(packet2);
+                        socket2.leaveGroup(group);
+                        socket2.close();
+                        String message = new String(packet2.getData(), 0, packet2.getLength());
+                        if (message.equals("okay")){
+                            ArrayList<MulticastServer> mesasTotal2 = rmi.getMesasVoto();
+                            for(MulticastServer mesa: mesasTotal2){
+                                if(mesa.groupAddr.equals(this.groupAddr)){
+                                    rmi.setLigados(mesa,0,true);
+                                    break;
+                                }
+                            }
+                        }
+                    }catch (SocketTimeoutException e){}
+                }
                 try { sleep((long) (Math.random() * SLEEP_TIME)); } catch (InterruptedException e) { }
             }
         } catch (IOException e) {
@@ -286,16 +448,19 @@ public class MulticastServer extends Thread implements Serializable {
 
 class MulticastReceiver extends Thread{
     private String multicastGroup;
-    private int PORT = 4322;
+    private int port;
+
     static MulticastLibrary rmi;
 
     public MulticastReceiver(MulticastLibrary rmi) throws RemoteException {
         super();
         this.rmi = rmi;
+
     }
 
-    public MulticastReceiver(String multicastGroup) {
+    public MulticastReceiver(String multicastGroup,int port) {
         this.multicastGroup = multicastGroup;
+        this.port = port;
         System.out.println("Group Address: "+this.multicastGroup);
     }
 
@@ -340,10 +505,10 @@ class MulticastReceiver extends Thread{
         server.start();
         try {
             MulticastLibrary rmi = (MulticastLibrary) Naming.lookup("rmi://localhost:7000/RMI_Server");
-            rmi.sayHello();
+            //rmi.sayHello();
             MulticastReceiver multiserver = new MulticastReceiver(rmi);
             try {
-                socket = new MulticastSocket(PORT);
+                socket = new MulticastSocket(port);
                 InetAddress group = InetAddress.getByName(multicastGroup);
                 socket.joinGroup(group);
                 socket.setSoTimeout(120 * 1000);
@@ -352,9 +517,7 @@ class MulticastReceiver extends Thread{
                         byte[] buffer = new byte[256];
                         DatagramPacket packet2 = new DatagramPacket(buffer, buffer.length);
                         socket.receive(packet2);
-                        System.out.println("Received message from " + packet2.getAddress().getHostAddress() + ":" + packet2.getPort() + " with message:");
                         String message = new String(packet2.getData(), 0, packet2.getLength());
-                        System.out.println(message);
                         String [] login=message.split("\n");
                         boolean condicao = autenticacao(login[0],login[1]);
                         String resposta;
@@ -375,7 +538,7 @@ class MulticastReceiver extends Thread{
                     String message = "lock";
                     byte[] buffer3 = message.getBytes();
                     InetAddress group2 = InetAddress.getByName(multicastGroup);
-                    DatagramPacket packet = new DatagramPacket(buffer3, buffer3.length, group, PORT);
+                    DatagramPacket packet = new DatagramPacket(buffer3, buffer3.length, group, port);
                     socket.send(packet);
                     System.out.println("Nao foi obtida resposta.\nA bloquear terminal");
                 }

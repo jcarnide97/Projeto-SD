@@ -22,5 +22,7 @@ public interface MulticastLibrary extends Remote {
     public void atualizaMesaVoto(MulticastServer mesaVoto,boolean newState) throws RemoteException;
     public void setEndereco(MulticastServer mesaVoto,String address) throws RemoteException;
     public boolean userAuth(String nome, String numero) throws RemoteException;
+    public void setLigados(MulticastServer mesaVoto,int indice, boolean newstate) throws RemoteException;
+    public void atualizaTerminais(MulticastServer mesaVoto,Boolean[] newState) throws RemoteException;
 
 }

@@ -18,19 +18,24 @@ import static java.lang.System.exit;
 
 public class MulticastServer extends Thread implements Serializable {
     private static final long serialVersionUID = 1L;
+    protected static String groupAddr;
     private String MULTICAST_ADDRESS = "224.0.224.0";
     private int PORT = 4321;
     private long SLEEP_TIME = 5000;
     private Departamento departamento;
     private ArrayList<Eleicao> listaEleicoes;
     private Boolean estadoMesaVoto;
+    private String address_group;
+    public Boolean [] terminais;
     static MulticastLibrary rmi;
     private int unlocks = 0;
+
 
     public MulticastServer(Departamento departamento) {
         this.departamento = departamento;
         this.listaEleicoes = new ArrayList<>();
         this.estadoMesaVoto = false;
+        this.terminais = new Boolean[2];
     }
 
     public MulticastServer(MulticastLibrary rmi) throws RemoteException {
@@ -161,15 +166,52 @@ public class MulticastServer extends Thread implements Serializable {
                     rmi.atualizaMesaVoto(mesaEscolhida,true);
                     mesaEscolhida.setEstadoMesaVoto(true);
                     mesaOficial = mesaEscolhida;
+                    rmi.setEndereco(mesaOficial,groupAddr);
+                    MulticastServer multiserver = new MulticastServer(rmi);
+                    InputStreamReader input = new InputStreamReader(System.in);
+                    BufferedReader reader = new BufferedReader(input);
+                    String nome;
+                    String numero;
+                    boolean ver;
+                    System.out.println("AUTENTICAR UTILIZADOR ");
+                    System.out.print("Nome: ");
+                    nome = reader.readLine();
+                    System.out.print("Numero: ");
+                    numero = reader.readLine();
+                    ver = autenticacao(nome,numero);
+                    if(ver){
+                        MulticastSocket socket = null;
+                        try {
+                            socket = new MulticastSocket();  // create socket and bind it
+                            InetAddress group = InetAddress.getByName(groupAddr);
+                            socket.joinGroup(group);
+                            try {
+                                socket = new MulticastSocket();  // create socket without binding it (only for sending)
+                                String message = "unlock";
+                                byte[] buffer3 = message.getBytes();
+                                InetAddress group2 = InetAddress.getByName(groupAddr);
+                                DatagramPacket packet = new DatagramPacket(buffer3, buffer3.length, group, 4322);
+                                socket.send(packet);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } finally {
+                                socket.close();
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } finally {
+                            socket.close();
+                        }
+                        //desbloquear terminal durante 120 segundos
+                        System.out.println(groupAddr);
+                        MulticastReceiver receiver = new MulticastReceiver(groupAddr);
+                        receiver.start();
                 }
                 else{
                     flagEscolhas = true;
                     System.out.println("Mesa a ser utilizada!");
                 }
-
-
             }
-
             if(flagEleicoes && flagDeps && !flagEscolhas){
                 MulticastServer finalMesaOficial = mesaOficial;
                 Runtime.getRuntime().addShutdownHook(new Thread(){
@@ -186,47 +228,6 @@ public class MulticastServer extends Thread implements Serializable {
 
                     }
                 });
-
-                MulticastServer multiserver = new MulticastServer(rmi);
-
-                InputStreamReader input = new InputStreamReader(System.in);
-                BufferedReader reader = new BufferedReader(input);
-
-                String nome;
-                String numero;
-                boolean ver;
-                System.out.println("AUTENTICAR UTILIZADOR ");
-                System.out.print("Nome: ");
-                nome = reader.readLine();
-                System.out.print("Numero: ");
-                numero = reader.readLine();
-                ver = autenticacao(nome,numero);
-                if(ver){
-                    MulticastSocket socket = null;
-                    try {
-                        socket = new MulticastSocket();  // create socket and bind it
-                        InetAddress group = InetAddress.getByName("224.0.224.0");
-                        socket.joinGroup(group);
-                        try {
-                            socket = new MulticastSocket();  // create socket without binding it (only for sending)
-                            String message = "unlock";
-                            byte[] buffer3 = message.getBytes();
-                            InetAddress group2 = InetAddress.getByName("224.0.224.0");
-                            DatagramPacket packet = new DatagramPacket(buffer3, buffer3.length, group, 4322);
-                            socket.send(packet);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } finally {
-                            socket.close();
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        socket.close();
-                    }
-                    //desbloquear terminal durante 120 segundos
-                    MulticastReceiver receiver = new MulticastReceiver();
-                    receiver.start();
                 }
             }
 
@@ -247,13 +248,12 @@ public class MulticastServer extends Thread implements Serializable {
         System.out.println(this.getName() + " running...");
         try {
             socket = new MulticastSocket();  // create socket without binding it (only for sending)
+            this.groupAddr=String.valueOf((int)(Math.random()*(239-225 + 1)+225))+"."+String.valueOf((int)(Math.random()*(255-0 + 1)+0))+"."+String.valueOf((int)(Math.random()*(255-0 + 1)+0))+"."+String.valueOf((int)(Math.random()*(255-1 + 1)+1));
             while (true) {
-                String message = "Connected to Multicast server";
-                byte[] buffer = message.getBytes();
+                byte[] buffer = this.groupAddr.getBytes();
                 InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
                 socket.send(packet);
-
                 try { sleep((long) (Math.random() * SLEEP_TIME)); } catch (InterruptedException e) { }
             }
         } catch (IOException e) {
@@ -285,7 +285,7 @@ public class MulticastServer extends Thread implements Serializable {
 }
 
 class MulticastReceiver extends Thread{
-    private String MULTICAST_ADDRESS = "224.0.224.0";
+    private String multicastGroup;
     private int PORT = 4322;
     static MulticastLibrary rmi;
 
@@ -294,9 +294,11 @@ class MulticastReceiver extends Thread{
         this.rmi = rmi;
     }
 
-    public MulticastReceiver() {
-        super("Server " + (long) (Math.random() * 1000));
+    public MulticastReceiver(String multicastGroup) {
+        this.multicastGroup = multicastGroup;
+        System.out.println("Group Address: "+this.multicastGroup);
     }
+
 
     public static void reconectarRMI() {
         int sleep = 1000;
@@ -342,7 +344,7 @@ class MulticastReceiver extends Thread{
             MulticastReceiver multiserver = new MulticastReceiver(rmi);
             try {
                 socket = new MulticastSocket(PORT);
-                InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+                InetAddress group = InetAddress.getByName(multicastGroup);
                 socket.joinGroup(group);
                 socket.setSoTimeout(120 * 1000);
                 try{
@@ -372,8 +374,8 @@ class MulticastReceiver extends Thread{
                 }catch (SocketTimeoutException e){
                     String message = "lock";
                     byte[] buffer3 = message.getBytes();
-                    InetAddress group2 = InetAddress.getByName("224.0.224.0");
-                    DatagramPacket packet = new DatagramPacket(buffer3, buffer3.length, group, 4322);
+                    InetAddress group2 = InetAddress.getByName(multicastGroup);
+                    DatagramPacket packet = new DatagramPacket(buffer3, buffer3.length, group, PORT);
                     socket.send(packet);
                     System.out.println("Nao foi obtida resposta.\nA bloquear terminal");
                 }

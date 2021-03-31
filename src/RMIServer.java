@@ -124,6 +124,17 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         guardaDatabase();
     }
 
+    synchronized public void setEndereco(MulticastServer mesaVoto,String address) throws RemoteException {
+        for(MulticastServer mesa:mesasVoto){
+            if(mesa.getDepartamento().getNome().equals(mesaVoto.getDepartamento().getNome())){
+               mesa.groupAddr = address;
+               mesa.terminais= new Boolean[]{false, false};
+               break;
+            }
+        }
+        guardaDatabase();
+    }
+
     synchronized public void removeMesaVoto(int i) {
         this.mesasVoto.remove(i);
         guardaDatabase();

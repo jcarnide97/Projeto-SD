@@ -43,12 +43,9 @@ public class MulticastClient extends Thread {
             socket.receive(packet);
             System.out.println("Received message from " + packet.getAddress().getHostAddress() + ":" + packet.getPort() + " with message:");
             String message = new String(packet.getData(), 0, packet.getLength());
-            System.out.println(message);
-            if(message.equals("Connected to Multicast server")){
+            MulticastUser user = new MulticastUser(message);
+            user.start();
 
-                MulticastUser user = new MulticastUser();
-                user.start();
-            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -60,11 +57,13 @@ public class MulticastClient extends Thread {
 
 class MulticastUser extends Thread {
     private String MULTICAST_ADDRESS = "224.0.224.0";
+    private String groupAddr;
     private int PORT = 4322;
     private String state = "locked";
 
-    public MulticastUser() {
-        super("User " + (long) (Math.random() * 1000));
+    public MulticastUser(String groupAddr) {
+        this.groupAddr = groupAddr;
+        System.out.println("Vou conectar-me ao endereço: "+groupAddr);
     }
 
     public void run() {
@@ -72,19 +71,21 @@ class MulticastUser extends Thread {
         System.out.println(this.getName() + " ready...");
         try {
             socket = new MulticastSocket(PORT);  // create socket without binding it (only for sending)
-            Scanner keyboardScanner = new Scanner(System.in);
+            //Scanner keyboardScanner = new Scanner(System.in);
             String newState;
+            System.out.println("ola");
             while(true){
                 while (true) {
                     newState = "lock";
                     socket = new MulticastSocket(PORT);  // create socket and bind it
-                    InetAddress group2 = InetAddress.getByName(MULTICAST_ADDRESS);
-                    socket.joinGroup(group2);
+                    InetAddress group = InetAddress.getByName(this.groupAddr);
+                    socket.joinGroup(group);
                     byte[] buffer3 = new byte[256];
                     DatagramPacket packet2 = new DatagramPacket(buffer3, buffer3.length);
                     socket.receive(packet2);
                     newState = new String(packet2.getData(), 0, packet2.getLength());
                     System.out.println(newState);
+                    socket.leaveGroup(group);
 
                     if(newState.equals("unlock")){
                         socket = new MulticastSocket();
@@ -112,15 +113,19 @@ class MulticastUser extends Thread {
                         }
                         String total = nome + "\n" +pass;
                         byte[] buffer = total.getBytes();
-                        InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+                        group = InetAddress.getByName(this.groupAddr);
+                        socket.joinGroup(group);
                         DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
                         socket.send(packet);
+                        socket.leaveGroup(group);
                         byte[] buffer2 = new byte[1000];
                         DatagramPacket reply = new DatagramPacket(buffer2, buffer2.length);
+                        socket.joinGroup(group);
                         try {
                             socket.receive(reply);
+                            socket.leaveGroup(group);
                             System.out.println(new String(reply.getData(), 0, reply.getLength()));
-                            while((System.currentTimeMillis() - startTime)<120000){}
+
                             break;
                         } catch (SocketTimeoutException e) {
                             System.out.println("À espera que algo aconteça...");

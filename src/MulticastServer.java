@@ -344,7 +344,7 @@ class MulticastReceiver extends Thread{
                 socket = new MulticastSocket(PORT);
                 InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
                 socket.joinGroup(group);
-                socket.setSoTimeout(5 * 1000);
+                socket.setSoTimeout(120 * 1000);
                 try{
                     while (true) {
                         byte[] buffer = new byte[256];
@@ -370,12 +370,12 @@ class MulticastReceiver extends Thread{
                         break;
                     }
                 }catch (SocketTimeoutException e){
-                    String message = "timeout";
+                    String message = "lock";
                     byte[] buffer3 = message.getBytes();
                     InetAddress group2 = InetAddress.getByName("224.0.224.0");
                     DatagramPacket packet = new DatagramPacket(buffer3, buffer3.length, group, 4322);
                     socket.send(packet);
-                    System.out.println("aqui");
+                    System.out.println("Nao foi obtida resposta.\nA bloquear terminal");
                 }
 
             } catch (IOException e) {

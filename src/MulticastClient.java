@@ -95,16 +95,21 @@ class MulticastUser extends Thread {
                         System.out.println("LOGIN ");
                         System.out.print("Nome: ");
                         long startTime = System.currentTimeMillis();
-                        while((System.currentTimeMillis() - startTime)<5000 && !reader.ready()){}
-                        if((System.currentTimeMillis() - startTime)<5000 && reader.ready()){
+                        while((System.currentTimeMillis() - startTime)<120000 && !reader.ready()){}
+                        if((System.currentTimeMillis() - startTime)<120000 && reader.ready()){
                             nome = reader.readLine();
                         }
                         else{
                             break;
                         }
-
                         System.out.print("password: ");
-                        pass = reader.readLine();
+                        while((System.currentTimeMillis() - startTime)<120000 && !reader.ready()){}
+                        if((System.currentTimeMillis() - startTime)<120000 && reader.ready()){
+                            pass = reader.readLine();
+                        }
+                        else{
+                            break;
+                        }
                         String total = nome + "\n" +pass;
                         byte[] buffer = total.getBytes();
                         InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
@@ -115,6 +120,8 @@ class MulticastUser extends Thread {
                         try {
                             socket.receive(reply);
                             System.out.println(new String(reply.getData(), 0, reply.getLength()));
+                            while((System.currentTimeMillis() - startTime)<120000){}
+                            break;
                         } catch (SocketTimeoutException e) {
                             System.out.println("À espera que algo aconteça...");
                             continue;

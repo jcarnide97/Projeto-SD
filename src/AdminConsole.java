@@ -591,7 +591,7 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
                 try {
                     Thread.sleep(sleep);
                     sleep *= 2;
-                    if (sleep > 16000) {
+                    if (sleep > 30000) {
                         System.out.println("Avaria no RMI Server");
                         exit(0);
                     }

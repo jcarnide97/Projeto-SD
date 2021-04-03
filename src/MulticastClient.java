@@ -89,9 +89,9 @@ class MulticastUser extends Thread {
                     DatagramPacket packet2 = new DatagramPacket(buffer3, buffer3.length);
                     socket.receive(packet2);
                     newState = new String(packet2.getData(), 0, packet2.getLength());
-                    System.out.println(newState);
 
                     if(newState.equals("unlock")){
+                        System.out.println("Terminal desbloqueado!\n============\n============\n============\n============\n\n");
                         socket = new MulticastSocket();
                         InputStreamReader input = new InputStreamReader(System.in);
                         BufferedReader reader = new BufferedReader(input);
@@ -142,7 +142,8 @@ class MulticastUser extends Thread {
                                 byte[] buffer4 = resposta.getBytes();
                                 DatagramPacket packet3 = new DatagramPacket(buffer4, buffer4.length, group, port);
                                 socket.send(packet3);
-
+                                System.out.println("Voto Registado\nTerminal bloqueado!\n============\n============\n============\n============\n\n\n\n");
+                                break;
                             }
 
                             break;

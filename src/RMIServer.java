@@ -91,6 +91,10 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         return listaUsers;
     }
 
+    synchronized public ArrayList<String> getLoggedUsers() {
+        return loggedUsers;
+    }
+
     synchronized public ArrayList<Departamento> getListaDepartamentos() {
         return listaDepartamentos;
     }
@@ -132,6 +136,16 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         for(MulticastServer mesa:mesasVoto){
             if(mesa.getDepartamento().getNome().equals(mesaVoto.getDepartamento().getNome())){
                 mesa.terminais=newState;
+                break;
+            }
+        }
+        guardaDatabase();
+    }
+
+    synchronized public void atualizaTerminais1(MulticastServer mesaVoto,Boolean newState, int indice) throws RemoteException {
+        for(MulticastServer mesa:mesasVoto){
+            if(mesa.getDepartamento().getNome().equals(mesaVoto.getDepartamento().getNome())){
+                mesa.terminais[indice]=newState;
                 break;
             }
         }

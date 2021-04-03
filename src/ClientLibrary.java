@@ -16,4 +16,5 @@ public interface ClientLibrary extends Remote {
     public ArrayList<MulticastServer> getMesasVoto() throws RemoteException;
     public void addMesaVoto(MulticastServer mesaVoto) throws RemoteException;
     public void removeMesaVoto(int i) throws RemoteException;
+    public ArrayList<String> getLoggedUsers() throws RemoteException;
 }

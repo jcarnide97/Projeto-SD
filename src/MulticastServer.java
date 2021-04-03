@@ -67,7 +67,7 @@ public class MulticastServer extends Thread implements Serializable {
                 try {
                     Thread.sleep(sleep);
                     sleep *= 2;
-                    if (sleep > 16000) {
+                    if (sleep > 30000) {
                         System.out.println("Avaria no RMI Server");
                         exit(0);
                     }
@@ -198,7 +198,36 @@ public class MulticastServer extends Thread implements Serializable {
                         System.out.print("Numero: ");
                         numero = reader.readLine();
                         ver = autenticacao(nome,numero);
-                        if(ver){
+                        ArrayList<User> votantes;
+                        boolean checaUser = false;
+                        for (MulticastServer dep : deps) {
+                            for(Eleicao eles : dep.getListaEleicoes()){
+                                if (eles.getTitulo().equals(eleicoes.get(opcaoEleicao).getTitulo())){
+                                    ArrayList<Voto> votos = eles.getListaVotos();
+                                    for(Voto voto: votos){
+                                        if(voto.getEleitor().getNome().equals(nome) && voto.getEleitor().getNumero().equals(numero)){
+                                            checaUser = true;
+                                            break;
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+
+                        ArrayList<String> loggedUsers = rmi.getLoggedUsers();
+
+                        for(String name:loggedUsers){
+                            if (name.equals(nome)){
+                                checaUser=true;
+                                System.out.println("Utilizador já logado, ou utilizador já votou");
+                                break;
+                            }
+                        }
+
+                        ver = autenticacao(nome,numero);
+                        if(ver && !checaUser){
                             MulticastSocket socket = null;
                             try {
                                 socket = new MulticastSocket();  // create socket and bind it
@@ -243,7 +272,6 @@ public class MulticastServer extends Thread implements Serializable {
                             } finally {
                                 socket.close();
                             }
-                            //desbloquear terminal durante 120 segundos
 
                             ArrayList<MulticastServer> mesas;
                             while (true) {
@@ -261,14 +289,17 @@ public class MulticastServer extends Thread implements Serializable {
                                     if(!terminaisUsados[0]){
                                         terminaisUsados[0]=true;
                                         rmi.atualizaTerminais(mesa,terminaisUsados);
-                                        MulticastReceiver receiver = new MulticastReceiver(groupAddr,4321,mesa,eleicoes.get(opcaoEleicao).getTitulo());
+                                        MulticastReceiver receiver = new MulticastReceiver(groupAddr,4321,mesa,eleicoes.get(opcaoEleicao).getTitulo(),numero);
                                         receiver.start();
                                     }
                                     else if(!terminaisUsados[1]){
                                         terminaisUsados[1]=true;
                                         rmi.atualizaTerminais(mesa,terminaisUsados);
-                                        MulticastReceiver receiver = new MulticastReceiver(groupAddr,4322,mesa,eleicoes.get(opcaoEleicao).getTitulo());
+                                        MulticastReceiver receiver = new MulticastReceiver(groupAddr,4322,mesa,eleicoes.get(opcaoEleicao).getTitulo(),numero);
                                         receiver.start();
+                                    }
+                                    else{
+                                        System.out.println("Todos os terminais estao a ser usados! Repita o processo");
                                     }
                                     break;
                                 }
@@ -449,6 +480,7 @@ class MulticastReceiver extends Thread{
     private MulticastServer mesa;
     static MulticastLibrary rmi;
     private String eleicaoName;
+    private String numero;
 
     public MulticastReceiver(MulticastLibrary rmi) throws RemoteException {
         super();
@@ -456,11 +488,12 @@ class MulticastReceiver extends Thread{
 
     }
 
-    public MulticastReceiver(String multicastGroup,int port, MulticastServer mesa, String eleicaoName){
+    public MulticastReceiver(String multicastGroup,int port, MulticastServer mesa, String eleicaoName,String numero){
         this.multicastGroup = multicastGroup;
         this.port = port;
         this.mesa = mesa;
         this.eleicaoName = eleicaoName;
+        this.numero = numero;
         //System.out.println(": "+this.multicastGroup);
     }
 
@@ -475,7 +508,7 @@ class MulticastReceiver extends Thread{
                 try {
                     Thread.sleep(sleep);
                     sleep *= 2;
-                    if (sleep > 16000) {
+                    if (sleep > 30000) {
                         System.out.println("Avaria no RMI Server");
                         exit(0);
                     }
@@ -538,27 +571,43 @@ class MulticastReceiver extends Thread{
                             DatagramPacket packet4 = new DatagramPacket(buffer4, buffer4.length);
                             socket.receive(packet4);
                             String message4 = new String(packet4.getData(), 0, packet4.getLength());
-                            //System.out.println(message4);
                             int voto = Integer.valueOf(message4);
                             for(Eleicao elei: rmi.getListaEleicoes()){
                                 if(elei.getTitulo().equals(eleicaoName)){
                                     for(int i=0;i<elei.getListaCandidatas().size();i++){
                                         if(i==voto){
-                                            elei.getListaCandidatas().get(i).increaseVotes();
-                                            //System.out.println(elei.getListaCandidatas().get(i).votos);
+                                            for(User user:rmi.getListaUsers()){
+                                                if(user.getNumero().equals(this.numero)){
+                                                    for(Departamento dep:rmi.getListaDepartamentos()){
+                                                        if(dep.getNome().equals(mesa.getDepartamento().getNome())){
+                                                            Voto v = new Voto(user,elei.getListaCandidatas().get(i),dep);
+                                                            elei.addVoto(v);
+                                                            break;
+                                                        }
+                                                    }
+                                                    break;
+                                                }
+                                            }
                                             break;
                                         }
                                     }
                                     break;
                                 }
                             }
-
+                            while (true) {
+                                try {
+                                    if(port==4321) rmi.atualizaTerminais1(mesa,false,0);
+                                    else rmi.atualizaTerminais1(mesa,false,1);
+                                    break;
+                                } catch (RemoteException re) {
+                                    reconectarRMI();
+                                }
+                            }
                         }
                         else{
                             System.out.println("Erro no login!");
                             resposta = "Erro no login!";
                         }
-
                         break;
                     }
                 }catch (SocketTimeoutException e){
@@ -576,9 +625,7 @@ class MulticastReceiver extends Thread{
                 if(socket!=null){
                     socket.close();
                 }
-
             }
-
         } catch (Exception e) {
             System.out.println("Exception in main MulticastServer: " + e.getMessage());
             e.printStackTrace();

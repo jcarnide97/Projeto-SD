@@ -90,6 +90,10 @@ public class Eleicao implements Serializable {
         this.listaVotantes = listaVotantes;
     }
 
+    public ArrayList<Voto> getListaVotos(){
+        return this.listaVotos;
+    }
+
     public void addVoto(Voto voto) {
         this.listaVotos.add(voto);
         for (User u : listaVotantes) {

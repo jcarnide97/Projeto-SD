@@ -129,10 +129,20 @@ class MulticastUser extends Thread {
                             if(!listas.equals("")){
                                 String [] listasFinais = listas.split("\n");
                                 int i;
-
                                 for(i=0;i< listasFinais.length;i++){
                                     System.out.println("["+i+"]->"+listasFinais[i]);
                                 }
+                                int opcaoLista;
+                                Scanner sc = new Scanner(System.in);
+                                do {
+                                    System.out.print(">>> ");
+                                    opcaoLista = sc.nextInt();
+                                } while (opcaoLista < 0 || opcaoLista > listasFinais.length-1);
+                                String resposta = String.valueOf(opcaoLista);
+                                byte[] buffer4 = resposta.getBytes();
+                                DatagramPacket packet3 = new DatagramPacket(buffer4, buffer4.length, group, port);
+                                socket.send(packet3);
+
                             }
 
                             break;

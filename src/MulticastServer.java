@@ -491,7 +491,6 @@ class MulticastReceiver extends Thread{
         while (true) {
             try {
                 verifica = rmi.userLogin(nome,pass);
-                System.out.println(verifica);
                 return verifica;
             } catch (RemoteException re) {
                 reconectarRMI();
@@ -523,10 +522,8 @@ class MulticastReceiver extends Thread{
                         String resposta;
                         if(condicao){
                             String listas="";
-
                             for(Eleicao elei: rmi.getListaEleicoes()){
                                 if(elei.getTitulo().equals(eleicaoName)){
-                                    System.out.println(elei.getListaCandidatas().size());
                                     for(ListaCandidata lista: elei.getListaCandidatas()){
                                         listas+=lista.getNome()+"\n";
                                     }
@@ -535,14 +532,35 @@ class MulticastReceiver extends Thread{
                             }
                             System.out.println("Utilizador "+login[0]+" vai votar!");
                             resposta = listas;
+                            packet2.setData(resposta.getBytes());
+                            DatagramPacket reply = new DatagramPacket(packet2.getData(),packet2.getLength(), packet2.getAddress(), packet2.getPort());
+                            socket.send(reply);
+
+                            byte[] buffer4 = new byte[256];
+                            DatagramPacket packet4 = new DatagramPacket(buffer4, buffer4.length);
+                            socket.receive(packet4);
+                            String message4 = new String(packet4.getData(), 0, packet4.getLength());
+                            System.out.println(message4);
+                            int voto = Integer.valueOf(message4);
+                            for(Eleicao elei: rmi.getListaEleicoes()){
+                                if(elei.getTitulo().equals(eleicaoName)){
+                                    for(int i=0;i<elei.getListaCandidatas().size();i++){
+                                        if(i==voto){
+                                            elei.getListaCandidatas().get(i).increaseVotes();
+                                            System.out.println(elei.getListaCandidatas().get(i).votos);
+                                            break;
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
+
                         }
                         else{
                             System.out.println("Erro no login!");
                             resposta = "Erro no login!";
                         }
-                        packet2.setData(resposta.getBytes());
-                        DatagramPacket reply = new DatagramPacket(packet2.getData(),packet2.getLength(), packet2.getAddress(), packet2.getPort());
-                        socket.send(reply);
+
                         break;
                     }
                 }catch (SocketTimeoutException e){

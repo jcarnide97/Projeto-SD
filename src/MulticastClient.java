@@ -107,7 +107,7 @@ class MulticastUser extends Thread {
                         else{
                             break;
                         }
-                        System.out.print("password: ");
+                        System.out.print("Password: ");
                         while((System.currentTimeMillis() - startTime)<120000 && !reader.ready()){}
                         if((System.currentTimeMillis() - startTime)<120000 && reader.ready()){
                             pass = reader.readLine();

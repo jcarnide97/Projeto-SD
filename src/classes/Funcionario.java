@@ -40,6 +40,4 @@ public class Funcionario extends User implements Serializable {
                 ", validadeCC='" + validadeCC + '\'' +
                 '}';
     }
-
-    
 }

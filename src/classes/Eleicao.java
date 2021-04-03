@@ -38,6 +38,10 @@ public class Eleicao implements Serializable {
         this.listaCandidatas.add(new ListaCandidata("Voto Nulo"));
     }
 
+    public ArrayList<ListaCandidata> getListaCandidatas(){
+        return this.listaCandidatas;
+    }
+
     public ArrayList<Departamento> getListaDepartamento(){
         return this.listaDepartamento;
     }
@@ -95,7 +99,7 @@ public class Eleicao implements Serializable {
         }
     }
 
-    public ArrayList<ListaCandidata> getListaCandidatos(User user) {
+    public ArrayList<ListaCandidata> getListaCandidatos() {
         return listaCandidatas;
     }
 
@@ -120,6 +124,7 @@ public class Eleicao implements Serializable {
             String nomeLista = sc.nextLine();
             ListaCandidata novaLista = new ListaCandidata(nomeLista);
             this.listaCandidatas.add(novaLista);
+            System.out.println(this.listaCandidatas.size());
         } else if (opcao.equals("2")) {
             if (this.listaCandidatas.isEmpty()) {
                 System.out.println("Ainda não existem listas associadas a esta eleição");

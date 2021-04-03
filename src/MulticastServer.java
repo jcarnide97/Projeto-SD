@@ -85,7 +85,6 @@ public class MulticastServer extends Thread implements Serializable {
         try {
             rmi = (MulticastLibrary) Naming.lookup("rmi://localhost:7000/RMI_Server");
             rmi.sayHello();
-
             ArrayList<Eleicao> eleicoes = new ArrayList<>();
             boolean flagEleicoes = false;
             boolean flagDeps = false;
@@ -185,8 +184,6 @@ public class MulticastServer extends Thread implements Serializable {
 
                         }
                     });
-
-
                     MulticastServer multiserver = new MulticastServer(rmi);
                     InputStreamReader input = new InputStreamReader(System.in);
                     BufferedReader reader = new BufferedReader(input);
@@ -262,13 +259,13 @@ public class MulticastServer extends Thread implements Serializable {
                                 if(!terminaisUsados[0]){
                                     terminaisUsados[0]=true;
                                     rmi.atualizaTerminais(mesa,terminaisUsados);
-                                    MulticastReceiver receiver = new MulticastReceiver(groupAddr,4321);
+                                    MulticastReceiver receiver = new MulticastReceiver(groupAddr,4321,mesa,eleicoes.get(opcaoEleicao).getTitulo());
                                     receiver.start();
                                 }
                                 else if(!terminaisUsados[1]){
                                     terminaisUsados[1]=true;
                                     rmi.atualizaTerminais(mesa,terminaisUsados);
-                                    MulticastReceiver receiver = new MulticastReceiver(groupAddr,4322);
+                                    MulticastReceiver receiver = new MulticastReceiver(groupAddr,4322,mesa,eleicoes.get(opcaoEleicao).getTitulo());
                                     receiver.start();
                                 }
                                 break;
@@ -278,12 +275,12 @@ public class MulticastServer extends Thread implements Serializable {
 
 
 
+                    }
+                    else{
+                        flagEscolhas = true;
+                        System.out.println("Mesa a ser utilizada!");
+                    }
                 }
-                else{
-                    flagEscolhas = true;
-                    System.out.println("Mesa a ser utilizada!");
-                }
-            }
             }
 
         } catch (Exception e) {
@@ -449,8 +446,9 @@ public class MulticastServer extends Thread implements Serializable {
 class MulticastReceiver extends Thread{
     private String multicastGroup;
     private int port;
-
+    private MulticastServer mesa;
     static MulticastLibrary rmi;
+    private String eleicaoName;
 
     public MulticastReceiver(MulticastLibrary rmi) throws RemoteException {
         super();
@@ -458,10 +456,12 @@ class MulticastReceiver extends Thread{
 
     }
 
-    public MulticastReceiver(String multicastGroup,int port) {
+    public MulticastReceiver(String multicastGroup,int port, MulticastServer mesa, String eleicaoName){
         this.multicastGroup = multicastGroup;
         this.port = port;
-        System.out.println("Group Address: "+this.multicastGroup);
+        this.mesa = mesa;
+        this.eleicaoName = eleicaoName;
+        //System.out.println(": "+this.multicastGroup);
     }
 
 
@@ -522,8 +522,19 @@ class MulticastReceiver extends Thread{
                         boolean condicao = autenticacao(login[0],login[1]);
                         String resposta;
                         if(condicao){
+                            String listas="";
+
+                            for(Eleicao elei: rmi.getListaEleicoes()){
+                                if(elei.getTitulo().equals(eleicaoName)){
+                                    System.out.println(elei.getListaCandidatas().size());
+                                    for(ListaCandidata lista: elei.getListaCandidatas()){
+                                        listas+=lista.getNome()+"\n";
+                                    }
+                                    break;
+                                }
+                            }
                             System.out.println("Utilizador "+login[0]+" vai votar!");
-                            resposta = "Logado!\nMostrar Eleições:";
+                            resposta = listas;
                         }
                         else{
                             System.out.println("Erro no login!");

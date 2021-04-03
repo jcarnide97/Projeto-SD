@@ -199,7 +199,7 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
                 }
             }
             for (int i = 0; i < eleicoes.size(); i++) {
-                if (novaEleicao.getTitulo().toUpperCase().equals(rmi.getListaEleicoes().get(i).getTitulo().toUpperCase()) && (novaEleicao.getDescricao().toUpperCase().equals(rmi.getListaEleicoes().get(i).getDescricao().toUpperCase()))) {
+                if (novaEleicao.getTitulo().toUpperCase().equals(rmi.getListaEleicoes().get(i).getTitulo().toUpperCase()) && (novaEleicao.getDescricao().toUpperCase().equals(rmi.getListaEleicoes().get(i).getDescricao().toUpperCase()))){
                     rmi.removeEleicao(i);
                 }
             }

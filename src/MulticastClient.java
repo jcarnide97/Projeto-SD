@@ -125,7 +125,15 @@ class MulticastUser extends Thread {
                         DatagramPacket reply = new DatagramPacket(buffer2, buffer2.length);
                         try {
                             socket.receive(reply);
-                            System.out.println(new String(reply.getData(), 0, reply.getLength()));
+                            String listas = new String(reply.getData(), 0, reply.getLength());
+                            if(!listas.equals("")){
+                                String [] listasFinais = listas.split("\n");
+                                int i;
+
+                                for(i=0;i< listasFinais.length;i++){
+                                    System.out.println("["+i+"]->"+listasFinais[i]);
+                                }
+                            }
 
                             break;
                         } catch (SocketTimeoutException e) {

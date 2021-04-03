@@ -57,6 +57,10 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         System.out.println("Leitura do ficheiro de Eleições...");
         for (Eleicao eleicao : listaEleicoes) {
             eleicao.printEleicao();
+            System.out.println("------Listas:");
+            for(ListaCandidata lista: eleicao.getListaCandidatas()){
+                System.out.println("------------"+lista.getNome());
+            }
         }
     }
 
@@ -65,8 +69,8 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
     }
 
     synchronized public void addDepartamento(Departamento dep) {
-       this.listaDepartamentos.add(dep);
-       guardaDatabase();
+        this.listaDepartamentos.add(dep);
+        guardaDatabase();
     }
 
     synchronized public Boolean registarUser(User user) throws RemoteException {
@@ -137,10 +141,10 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
     synchronized public void setEndereco(MulticastServer mesaVoto,String address) throws RemoteException {
         for(MulticastServer mesa:mesasVoto){
             if(mesa.getDepartamento().getNome().equals(mesaVoto.getDepartamento().getNome())){
-               mesa.groupAddr = address;
-               mesa.terminais= new Boolean[]{false, false};
-               mesa.auxterminais = new Boolean[]{false, false};
-               break;
+                mesa.groupAddr = address;
+                mesa.terminais= new Boolean[]{false, false};
+                mesa.auxterminais = new Boolean[]{false, false};
+                break;
             }
         }
         guardaDatabase();
@@ -249,6 +253,8 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
             }
         }
     }
+
+
 
     public void udpServerConnection() {
         new Thread(new UDPServer()).start();

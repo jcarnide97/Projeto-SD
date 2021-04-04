@@ -33,6 +33,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         this.usersAuth = new HashMap<String, String>();
         this.usersAuth2 = new HashMap<String, String>();
         this.loggedUsers = new ArrayList<>();
+        //guardaDatabase();
         startDatabase();
         System.out.println("Leitura dos ficheiros de utilizadores...");
         for (User user : listaUsers) {
@@ -67,6 +68,8 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
     synchronized public void sayHello() throws RemoteException {
         System.out.println("print do lado do servidor...");
     }
+
+
 
     synchronized public void addDepartamento(Departamento dep) {
         this.listaDepartamentos.add(dep);
@@ -112,6 +115,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         this.listaEleicoes.remove(i);
         guardaDatabase();
     }
+
 
     synchronized public ArrayList<MulticastServer> getMesasVoto() {
         return mesasVoto;
@@ -196,6 +200,33 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         return valido;
     }
 
+    public void logout(String nome, String password) throws RemoteException {
+        boolean valido;
+        valido = usersAuth.containsKey(nome) && usersAuth.get(nome).equals(password);
+        if (valido) {
+            loggedUsers.remove(nome);
+        }
+    }
+
+    synchronized public Boolean checkEleicaoTime(Eleicao eleicao) throws RemoteException{
+
+        if(eleicao.votacaoAberta()){
+            return true;
+        }
+        return false;
+
+    }
+
+    synchronized public void addVotos(Eleicao elei, Voto voto)throws  RemoteException{
+        for(Eleicao eleicao:listaEleicoes){
+            if(eleicao.getTitulo().equals(elei.getTitulo())&&eleicao.getDescricao().equals(elei.getDescricao())){
+                eleicao.addVoto(voto);
+                break;
+            }
+        }
+        guardaDatabase();
+    }
+
     public void startDatabase() {
         ObjectInputStream oisUsers = null;
         ObjectInputStream oisDepartamentos = null;
@@ -267,6 +298,8 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
             }
         }
     }
+
+
 
 
 

@@ -147,13 +147,13 @@ class MulticastUser extends Thread {
                             }
 
                             break;
-                        } catch (SocketTimeoutException e) {
+                        } catch (SocketTimeoutException e){
                             System.out.println("À espera que algo aconteça...");
                             continue;
                         }
                     }
                     else{
-                        System.out.println("Terminal bloqueado!\n============\n============\n============\n============");
+                        System.out.println("Terminal bloqueado!\n============\n============\n============\n============\n\n\n");
                     }
 
                 }

@@ -7,10 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import java.io.InputStreamReader;
 import classes.*;
 
@@ -119,8 +116,12 @@ public class MulticastServer extends Thread implements Serializable {
                 do {
                     System.out.print(">>> ");
                     opcaoEleicao = sc.nextInt();
-                } while (opcaoEleicao < 0 || opcaoEleicao > eleicoes.size()-1);
+                    if(!rmi.checkEleicaoTime(eleicoes.get(opcaoEleicao))){
+                        System.out.println("Fora do tempo de eleição.");
+                    }
+                } while (opcaoEleicao < 0 || opcaoEleicao > eleicoes.size()-1||!rmi.checkEleicaoTime(eleicoes.get(opcaoEleicao)));
                 eleicoes.get(opcaoEleicao).printEleicao();
+
 
                 ArrayList<MulticastServer> deps;
                 while (true) {
@@ -204,20 +205,21 @@ public class MulticastServer extends Thread implements Serializable {
                             for(Eleicao eles : dep.getListaEleicoes()){
                                 if (eles.getTitulo().equals(eleicoes.get(opcaoEleicao).getTitulo())){
                                     ArrayList<Voto> votos = eles.getListaVotos();
-                                    for(Voto voto: votos){
-                                        if(voto.getEleitor().getNome().equals(nome) && voto.getEleitor().getNumero().equals(numero)){
-                                            checaUser = true;
-                                            break;
+                                    if(votos!=null){
+                                        for(Voto voto: votos){
+                                            if(voto.getEleitor().getNome().equals(nome) && voto.getEleitor().getNumero().equals(numero)){
+                                                checaUser = true;
+                                                break;
+                                            }
                                         }
                                     }
+
                                     break;
                                 }
                             }
                             break;
                         }
-
                         ArrayList<String> loggedUsers = rmi.getLoggedUsers();
-
                         for(String name:loggedUsers){
                             if (name.equals(nome)){
                                 checaUser=true;
@@ -519,6 +521,17 @@ class MulticastReceiver extends Thread{
         }
     }
 
+    public static void logout(String nome, String pass){
+        while (true) {
+            try {
+                rmi.logout(nome,pass);
+                break;
+            } catch (RemoteException re) {
+                reconectarRMI();
+            }
+        }
+    }
+
     public static boolean autenticacao(String nome, String pass){
         boolean verifica;
         while (true) {
@@ -580,8 +593,16 @@ class MulticastReceiver extends Thread{
                                                 if(user.getNumero().equals(this.numero)){
                                                     for(Departamento dep:rmi.getListaDepartamentos()){
                                                         if(dep.getNome().equals(mesa.getDepartamento().getNome())){
-                                                            Voto v = new Voto(user,elei.getListaCandidatas().get(i),dep);
-                                                            elei.addVoto(v);
+                                                            Date date = new Date(System.currentTimeMillis());
+                                                            Voto v = new Voto(user,elei.getListaCandidatas().get(i),dep,date);
+                                                            try{
+                                                                while(true){
+                                                                    rmi.addVotos(elei,v);
+                                                                    break;
+                                                                }
+                                                            }catch (RemoteException e){
+                                                                reconectarRMI();
+                                                            }
                                                             break;
                                                         }
                                                     }
@@ -594,6 +615,7 @@ class MulticastReceiver extends Thread{
                                     break;
                                 }
                             }
+                            logout(login[0],login[1]);
                             while (true) {
                                 try {
                                     if(port==4321) rmi.atualizaTerminais1(mesa,false,0);
@@ -618,6 +640,8 @@ class MulticastReceiver extends Thread{
                     socket.send(packet);
                     System.out.println("Nao foi obtida resposta.\nA bloquear terminal");
                 }
+
+
 
             } catch (IOException e) {
                 e.printStackTrace();

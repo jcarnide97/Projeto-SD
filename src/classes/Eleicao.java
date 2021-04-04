@@ -12,7 +12,7 @@ public class Eleicao implements Serializable {
 
     private ArrayList<Departamento> listaDepartamento;
     private ArrayList<User> listaVotantes;
-    private ArrayList<Voto> listaVotos;
+    private ArrayList<Voto> listaVotos=new ArrayList<Voto>();
     private ArrayList<ListaCandidata> listaCandidatas;
 
     private static DecimalFormat df = new DecimalFormat("0.00");
@@ -36,6 +36,7 @@ public class Eleicao implements Serializable {
         this.listaCandidatas = listaCandidatas;
         this.listaCandidatas.add(new ListaCandidata("Voto em Branco"));
         this.listaCandidatas.add(new ListaCandidata("Voto Nulo"));
+        this.listaVotos = new ArrayList<>();
     }
 
     public ArrayList<ListaCandidata> getListaCandidatas(){
@@ -95,12 +96,11 @@ public class Eleicao implements Serializable {
     }
 
     public void addVoto(Voto voto) {
-        this.listaVotos.add(voto);
-        for (User u : listaVotantes) {
-            if (voto.getEleitor().getNumero().equals(u.getNumero())) {
-                listaVotantes.remove(u);
-            }
+
+        if(this.listaVotos==null){
+            this.listaVotos = new ArrayList<Voto>();
         }
+        this.listaVotos.add(voto);
     }
 
     public ArrayList<ListaCandidata> getListaCandidatos() {
@@ -170,7 +170,7 @@ public class Eleicao implements Serializable {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         System.out.println("Inicio: " + dateFormat.format(dataComeco));
         System.out.println("Fim: " + dateFormat.format(dataFim));
-        /*float totalVotos = this.listaVotos.size();
+        float totalVotos = this.listaVotos.size();
         System.out.println("Total de votos: " + (int)totalVotos);
         float percVotos;
         for (ListaCandidata lista : listaCandidatas) {
@@ -193,7 +193,7 @@ public class Eleicao implements Serializable {
                 percVotos = (conta/totalVotos)*100;
                 System.out.println("\tPercentagem de votos da lista " + lista.getNome() + "= " + percVotos);
             }
-        }*/
+        }
     }
 
     public void numVotosAtual() {

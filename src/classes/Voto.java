@@ -9,10 +9,11 @@ public class Voto implements Serializable {
     private Departamento localVoto;
     private Date horaVoto;
 
-    public Voto(User eleitor, ListaCandidata escolhaVoto, Departamento localVoto) {
+    public Voto(User eleitor, ListaCandidata escolhaVoto, Departamento localVoto, Date horaVoto) {
         this.eleitor = eleitor;
         this.escolhaVoto = escolhaVoto;
         this.localVoto = localVoto;
+        this.horaVoto = horaVoto;
     }
 
     public User getEleitor() {

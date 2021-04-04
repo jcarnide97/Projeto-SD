@@ -23,4 +23,6 @@ public interface ServerLibrary extends Remote {
     public void atualizaTerminais(MulticastServer mesaVoto,Boolean[] newState) throws RemoteException;
     public ArrayList<String> getLoggedUsers() throws RemoteException;
     public void atualizaTerminais1(MulticastServer mesaVoto,Boolean newState, int indice) throws RemoteException;
+    public Boolean checkEleicaoTime(Eleicao eleicao) throws RemoteException;
+    public void logout(String nome, String password) throws RemoteException;
 }

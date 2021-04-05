@@ -13,7 +13,7 @@ import classes.*;
 import static java.lang.System.exit;
 
 public class AdminConsole extends UnicastRemoteObject implements Serializable {
-    ClientLibrary rmi;
+    ClientLibrary rmi;  // argumento que fará a invocação dos métodos remotamente
 
     public AdminConsole(ClientLibrary rmi) throws RemoteException {
         super();
@@ -21,6 +21,9 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
         adminConsoleMenu();
     }
 
+    /**
+     * Método para criar departamentos
+     */
     public void criaDepartamento() {
         try {
             InputStreamReader input = new InputStreamReader(System.in);
@@ -56,7 +59,9 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
         }
     }
 
-    // Opção 1 - Registar Utilizadores
+    /**
+     * Opção 1 - Registar Utilizadores
+     */
     public void registarUser() {
         String nome;
         String numero;
@@ -111,6 +116,10 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
         }
     }
 
+    /**
+     * método para gerar um código de acesso de 6 caracteres para cada utilizador
+     * @return Password Gerada
+     */
     public String generatePassword() {
         int leftLimit = 33; // caracter !
         int rightLimit = 122;  // caracter z
@@ -125,6 +134,10 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
         return passwordGenerated;
     }
 
+    /**
+     * Método para fazer a escolha de um departamento - tanto para os users como para as mesas de voto
+     * @return
+     */
     public Departamento escolheDepartamento() {
         try {
             System.out.println("Departamentos existentes");
@@ -155,7 +168,9 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
         return null;
     }
 
-    // Opção 2 - Criar Eleição
+    /**
+     * Opção 2 - Criar Eleição
+     */
     public void criaEleicao() {
         try {
             Scanner scEleicao = new Scanner(System.in);
@@ -185,7 +200,9 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
         }
     }
 
-    // Opção 3 - Gerir Listas
+    /**
+     * Opção 3 - Gerir Listas Candidatas
+     */
     public void gerirListas() {
         try {
             Eleicao novaEleicao = escolheEleicao();
@@ -219,6 +236,10 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
         }
     }
 
+    /**
+     * Escolher uma eleição - tanto para associar lista de candidatos, mesas de voto ou para editar uma eleição
+     * @return
+     */
     public Eleicao escolheEleicao() {
         try {
             System.out.println("Lista de eleições existentes:");
@@ -259,7 +280,9 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
         return null;
     }
 
-    // Opção 4 - Gerir mesas de voto
+    /**
+     * Opção 4 - Gerir mesas de voto
+     */
     public void gerirMesasVoto() {
         System.out.println("Gestão de Mesas de voto");
         Scanner sc = new Scanner(System.in);
@@ -282,6 +305,9 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
         }
     }
 
+    /**
+     * Criar uma mesa de voto com base num departamento escolhido
+     */
     public void criaMesaVoto() {
         try {
             Departamento departamento = escolheDepartamento();
@@ -315,6 +341,9 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
         }
     }
 
+    /**
+     * Remover uma mesa de voto
+     */
     public void removeMesaVoto() {
         try {
             ArrayList<MulticastServer> mesasVoto;
@@ -355,6 +384,9 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
         }
     }
 
+    /**
+     * Associar uma mesa de voto a uma eleição
+     */
     public void associaMesaVoto() {
         try {
             Eleicao eleicao = escolheEleicao();
@@ -415,7 +447,9 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
         }
     }
 
-    // Opção 5 (9) - Alterar propriedades de uma eleição
+    /**
+     * Opção 5 (9) - Alterar propriedades de uma eleição
+     */
     private void editarEleicao() {
         try {
             Scanner sc = new Scanner(System.in);
@@ -457,7 +491,10 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
         }
     }
 
-    // Opção 6 (10) - Saber em que local votou cada eleitor
+    /**
+     * Opção 6 (10) - Saber em que local votou cada eleitor
+     * @throws IOException
+     */
     public void localVotoUsers() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Locais de voto dos eleitores");
@@ -477,7 +514,9 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
         }
     }
 
-    // Opção 7 (11) - Ver estado das mesas de voto
+    /**
+     * Opção 7 (11) - Ver estado das mesas de voto
+     */
     public void estadoMesasVoto() {
         try {
             ArrayList<MulticastServer> mesasVoto;
@@ -497,7 +536,9 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
         }
     }
 
-    // Opção 8 (12) - Mostrar eleições em tempo real
+    /**
+     * Opção 8 (12) - Mostrar eleições em tempo real
+     */
     public void eleicoesTempoReal() {
         ArrayList<MulticastServer> mesasVoto;
         while (true) {
@@ -540,7 +581,9 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
         }
     }
 
-    // Opção 9 (14) - Consultar resultados detalhados de eleições passadas
+    /**
+     * Opção 9 (14) - Consultar resultados detalhados de eleições passadas
+     */
     public void consultarEleicoesPassadas() {
         try {
             ArrayList<Eleicao> listaEleicoes;
@@ -580,6 +623,9 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
         }
     }
 
+    /**
+     * Método para reconectar com o servidor RMI em caso de failover
+     */
     public void reconectarRMI() {
         int sleep = 1000;
         while (true) {
@@ -602,6 +648,10 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
         }
     }
 
+    /**
+     * Método para ver estatísticas do sistema - printar todos os users, eleições, departamentos e mesas de voto
+     * @param rmi
+     */
     public void eVotingStats(ClientLibrary rmi) {
         try {
             System.out.println("Users");
@@ -638,6 +688,9 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
         }
     }
 
+    /**
+     * Menu principal da consola de administração
+     */
     public void adminConsoleMenu() {
         // eVotingStats(this.rmi);
         System.out.println("\teVoting Console Admin Main Menu");
@@ -700,6 +753,10 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
 
     }
 
+    /**
+     * Main da consola de administração
+     * @param args
+     */
     public static void main(String[] args) {
         try {
             ClientLibrary rmi = (ClientLibrary) Naming.lookup("rmi://localhost:7000/RMI_Server");

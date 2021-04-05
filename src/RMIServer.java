@@ -65,17 +65,29 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         }
     }
 
+    /**
+     * Verificar conexão entre RMI Server e Admin Console/Multicast Server
+     * @throws RemoteException
+     */
     synchronized public void sayHello() throws RemoteException {
         System.out.println("print do lado do servidor...");
     }
 
-
-
+    /**
+     * Adicionar departamento
+     * @param dep
+     */
     synchronized public void addDepartamento(Departamento dep) {
         this.listaDepartamentos.add(dep);
         guardaDatabase();
     }
 
+    /**
+     * Registar utilizador, verificando se já existe ou não, através do número
+     * @param user
+     * @return
+     * @throws RemoteException
+     */
     synchronized public Boolean registarUser(User user) throws RemoteException {
         for (User u : this.listaUsers) {
             if (user.getNumero().equals(u.getNumero())) {
@@ -102,6 +114,11 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         return listaDepartamentos;
     }
 
+    /**
+     * Adicionar uma eleição
+     * @param eleicao
+     * @throws RemoteException
+     */
     synchronized public void addEleicao(Eleicao eleicao) throws RemoteException {
         this.listaEleicoes.add(eleicao);
         guardaDatabase();
@@ -115,8 +132,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         this.listaEleicoes.remove(i);
         guardaDatabase();
     }
-
-
+    
     synchronized public ArrayList<MulticastServer> getMesasVoto() {
         return mesasVoto;
     }
@@ -178,11 +194,22 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         guardaDatabase();
     }
 
+    /**
+     * Remover uma mesa de voto
+     * @param i
+     */
     synchronized public void removeMesaVoto(int i) {
         this.mesasVoto.remove(i);
         guardaDatabase();
     }
 
+    /**
+     * Método para a autenticação de utilizadores nas mesas de voto
+     * @param nome
+     * @param numero
+     * @return
+     * @throws RemoteException
+     */
     public boolean userAuth(String nome, String numero) throws RemoteException {
         System.out.println("Autenticar " + nome + " na database...");
         boolean valido;
@@ -190,6 +217,13 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         return valido;
     }
 
+    /**
+     * Método para verificar os utilizadores nos terminais de voto
+     * @param nome
+     * @param password
+     * @return
+     * @throws RemoteException
+     */
     public boolean userLogin(String nome, String password) throws RemoteException {
         System.out.println("Verificar " + nome + " na database...");
         boolean valido;
@@ -200,6 +234,12 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         return valido;
     }
 
+    /**
+     * Método para fazer logout, removendo o user da lista de utilizadores que estão online
+     * @param nome
+     * @param password
+     * @throws RemoteException
+     */
     public void logout(String nome, String password) throws RemoteException {
         boolean valido;
         valido = usersAuth.containsKey(nome) && usersAuth.get(nome).equals(password);
@@ -208,6 +248,12 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         }
     }
 
+    /**
+     * Metodo para verificar o tempo da eleição
+     * @param eleicao
+     * @return
+     * @throws RemoteException
+     */
     synchronized public Boolean checkEleicaoTime(Eleicao eleicao) throws RemoteException{
 
         if(eleicao.votacaoAberta()){
@@ -217,7 +263,13 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
 
     }
 
-    synchronized public void addVotos(Eleicao elei, Voto voto)throws  RemoteException{
+    /**
+     * Método para adicionar votos a uma eleição
+     * @param elei
+     * @param voto
+     * @throws RemoteException
+     */
+    synchronized public void addVotos(Eleicao elei, Voto voto) throws RemoteException{
         for(Eleicao eleicao:listaEleicoes){
             if(eleicao.getTitulo().equals(elei.getTitulo())&&eleicao.getDescricao().equals(elei.getDescricao())){
                 eleicao.addVoto(voto);
@@ -227,6 +279,9 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         guardaDatabase();
     }
 
+    /**
+     * Inicializar a base de dados
+     */
     public void startDatabase() {
         ObjectInputStream oisUsers = null;
         ObjectInputStream oisDepartamentos = null;
@@ -261,6 +316,9 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         }
     }
 
+    /**
+     * Guardar dados atualizados na base de dados
+     */
     public void guardaDatabase() {
         FileOutputStream fosUsers;
         ObjectOutputStream oosUsers = null;
@@ -299,10 +357,9 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         }
     }
 
-
-
-
-
+    /**
+     * Método de inicialização da conexão UDP entre o servidor primário e secundário através do uso de uma thread
+     */
     public void udpServerConnection() {
         new Thread(new UDPServer()).start();
     }

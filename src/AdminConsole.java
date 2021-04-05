@@ -616,25 +616,26 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
             int i = 0;
             if (listaEleicoes.isEmpty()) {
                 System.out.println("Não exitem eleições!");
-            }
-            for (Eleicao eleicao : listaEleicoes) {
-                if (!eleicao.votacaoAcabou()) {
-                    eleicoesPassadas.add(eleicao);
+            } else {
+                for (Eleicao eleicao : listaEleicoes) {
+                    if (!eleicao.votacaoAcabou()) {
+                        eleicoesPassadas.add(eleicao);
+                    }
                 }
+                System.out.println("Eleições passadas:");
+                for (Eleicao eleicao : eleicoesPassadas) {
+                    i++;
+                    System.out.println("[" + i + "] " + eleicao.getTitulo());
+                }
+                int opcao;
+                System.out.println("Escolha uma eleição");
+                Scanner sc = new Scanner(System.in);
+                do {
+                    System.out.print(">>> ");
+                    opcao = sc.nextInt();
+                } while (opcao < 1 || opcao > eleicoesPassadas.size());
+                eleicoesPassadas.get(opcao - 1).printEleicao();
             }
-            System.out.println("Eleições passadas:");
-            for (Eleicao eleicao : eleicoesPassadas) {
-                i++;
-                System.out.println("[" + i + "] " + eleicao.getTitulo());
-            }
-            int opcao;
-            System.out.println("Escolha uma eleição");
-            Scanner sc = new Scanner(System.in);
-            do {
-                System.out.print(">>> ");
-                opcao = sc.nextInt();
-            } while (opcao < 1 || opcao > eleicoesPassadas.size());
-            eleicoesPassadas.get(opcao - 1).printEleicao();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -643,7 +644,6 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
     /**
      * Método para reconectar com o servidor RMI em caso de failover
      */
-    
     public void reconectarRMI() {
         int sleep = 1000;
         while (true) {

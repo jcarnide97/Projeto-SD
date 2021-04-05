@@ -1,10 +1,12 @@
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.net.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.rmi.Naming;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.time.Duration;
 import java.util.*;
@@ -121,9 +123,28 @@ public class MulticastServer extends Thread implements Serializable {
                     }
                 } while (opcaoEleicao < 0 || opcaoEleicao > eleicoes.size()-1||!rmi.checkEleicaoTime(eleicoes.get(opcaoEleicao)));
                 eleicoes.get(opcaoEleicao).printEleicao();
-
-
                 ArrayList<MulticastServer> deps;
+                Timer reminder = new Timer();
+                ArrayList<Eleicao> finalEleicoes = eleicoes;
+                int finalOpcaoEleicao = opcaoEleicao;
+                reminder.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        try{
+                            while(true){
+                                //System.out.println("helllo");
+                                if(!rmi.checkEleicaoTime(finalEleicoes.get(finalOpcaoEleicao))){
+                                    System.out.println("FECHA!!! ELEIÇAO TERMINOU");
+                                    exit(0);
+                                }
+                                break;
+                            }
+                        }catch (RemoteException e){
+                            reconectarRMI();
+                        }
+
+                    }
+                },500,1000);
                 while (true) {
                     try {
                         deps = rmi.getMesasVoto();
@@ -201,24 +222,25 @@ public class MulticastServer extends Thread implements Serializable {
                         ver = autenticacao(nome,numero);
                         ArrayList<User> votantes;
                         boolean checaUser = false;
-                        for (MulticastServer dep : deps) {
-                            for(Eleicao eles : dep.getListaEleicoes()){
-                                if (eles.getTitulo().equals(eleicoes.get(opcaoEleicao).getTitulo())){
-                                    ArrayList<Voto> votos = eles.getListaVotos();
-                                    if(votos!=null){
-                                        for(Voto voto: votos){
-                                            if(voto.getEleitor().getNome().equals(nome) && voto.getEleitor().getNumero().equals(numero)){
-                                                checaUser = true;
+                        try{
+                            while(true){
+                                ArrayList<Eleicao> eleicoes2 = rmi.getListaEleicoes();
+                                for(Eleicao elei : eleicoes2){
+                                    if(elei.getTitulo().equals(eleicoes.get(opcaoEleicao).getTitulo())){
+                                        ArrayList<Voto> votos = elei.getListaVotos();
+                                        for(Voto v : votos){
+                                            if(v.getEleitor().getNumero().equals(numero)){
+                                                checaUser=true;
+                                                System.out.println("here");
                                                 break;
                                             }
                                         }
+                                        break;
                                     }
-
-                                    break;
                                 }
+                                break;
                             }
-                            break;
-                        }
+                        }catch(RemoteException e){reconectarRMI();}
                         ArrayList<String> loggedUsers = rmi.getLoggedUsers();
                         for(String name:loggedUsers){
                             if (name.equals(nome)){
@@ -345,14 +367,20 @@ public class MulticastServer extends Thread implements Serializable {
                         reconectarRMI();
                     }
                 }
-                Boolean [] termLigados = new Boolean[0];
+                Boolean [] termLigados = new Boolean[2];
 
                 for(MulticastServer mesa: mesasTotal){
                     if(mesa.groupAddr.equals(this.groupAddr)){
+
                         termLigados=mesa.auxterminais;
                         break;
                     }
                 }
+                if(termLigados==null){
+                    termLigados[0]=false;
+                    termLigados[1]=false;
+                }
+                //System.out.println(termLigados);
                 if(!termLigados[0]&&!termLigados[1]){
 
                     int porto = 4321;
@@ -452,6 +480,12 @@ public class MulticastServer extends Thread implements Serializable {
             e.printStackTrace();
         } finally {
             socket.close();
+        }
+    }
+
+    public void checkTime(Eleicao elei) throws RemoteException {
+        if(!rmi.checkEleicaoTime(elei)){
+            exit(0);
         }
     }
 

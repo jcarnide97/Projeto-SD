@@ -107,6 +107,10 @@ public class Eleicao implements Serializable {
         return listaCandidatas;
     }
 
+    /**
+     * Método para verificar se a votação já está aberta ou não
+     * @return
+     */
     public boolean votacaoAberta() {
         Date currentDate = new Date(System.currentTimeMillis());
         System.out.println(currentDate.after(this.dataComeco));
@@ -114,11 +118,18 @@ public class Eleicao implements Serializable {
         return currentDate.after(this.dataComeco) && currentDate.before(this.dataFim);
     }
 
+    /**
+     * Método para verificar se a votação já acabou
+     * @return
+     */
     public boolean votacaoAcabou() {
         Date currentDate = new Date(System.currentTimeMillis());
         return !currentDate.after(this.dataFim);
     }
 
+    /**
+     * Método para gerir (adicionar e remover) listas de candidatos de uma eleição
+     */
     public void gerirCandidatos() {
         System.out.println("Pretende adicionar ou remover lista candidata?\n[1] Adicionar\n[2] Remover");
         Scanner sc = new Scanner(System.in);

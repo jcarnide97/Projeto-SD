@@ -183,7 +183,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         }
         guardaDatabase();
     }
-
+    
     synchronized public void setLigados(MulticastServer mesaVoto,int indice, boolean newstate) throws RemoteException {
         for(MulticastServer mesa:mesasVoto){
             if(mesa.getDepartamento().getNome().equals(mesaVoto.getDepartamento().getNome())){

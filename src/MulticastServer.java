@@ -42,11 +42,11 @@ public class MulticastServer extends Thread implements Serializable {
         this.rmi = rmi;
     }
 
-    public static boolean autenticacao(String nome, String numero){
+    public static boolean autenticacao(String nome, String numero, String tipo, Eleicao eleicao){
         boolean verifica;
         while (true) {
             try {
-                verifica = rmi.userAuth(nome,numero);
+                verifica = rmi.userAuth(nome, numero, tipo, eleicao);
                 System.out.println(verifica);
                 return verifica;
             } catch (RemoteException re) {
@@ -171,6 +171,9 @@ public class MulticastServer extends Thread implements Serializable {
                             break;
                         }
                     }
+                    if (!aux) {
+                        aux = true;
+                    }
                     if(aux){
                         indicesMesas.put(i,dep);
                         System.out.println("["+i+"] "+dep.getDepartamento().getNome());
@@ -213,13 +216,16 @@ public class MulticastServer extends Thread implements Serializable {
                         BufferedReader reader = new BufferedReader(input);
                         String nome;
                         String numero;
+                        String tipo;
                         boolean ver;
                         System.out.println("AUTENTICAR UTILIZADOR ");
                         System.out.print("\nNome: ");
                         nome = reader.readLine();
                         System.out.print("Numero: ");
                         numero = reader.readLine();
-                        ver = autenticacao(nome,numero);
+                        System.out.print("Tipo: ");
+                        tipo = reader.readLine();
+                        ver = autenticacao(nome,numero,tipo,eleicoes.get(opcaoEleicao));
                         ArrayList<User> votantes;
                         boolean checaUser = false;
                         try{
@@ -250,7 +256,7 @@ public class MulticastServer extends Thread implements Serializable {
                             }
                         }
 
-                        ver = autenticacao(nome,numero);
+                        ver = autenticacao(nome,numero,tipo,eleicoes.get(opcaoEleicao));
                         if(ver && !checaUser){
                             MulticastSocket socket = null;
                             try {

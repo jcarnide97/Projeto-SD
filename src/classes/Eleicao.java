@@ -9,6 +9,7 @@ public class Eleicao implements Serializable {
     Date dataFim;
     public String titulo;
     public String descricao;
+    public String tipo;
 
     private ArrayList<Departamento> listaDepartamento;
     private ArrayList<User> listaVotantes;
@@ -27,11 +28,12 @@ public class Eleicao implements Serializable {
         this.descricao = descricao;
     }
 
-    public Eleicao(Date dataComeco, Date dataFim, String titulo, String descricao, ArrayList<Departamento> listaDepartamento, ArrayList<ListaCandidata> listaCandidatas) {
+    public Eleicao(Date dataComeco, Date dataFim, String titulo, String descricao, String tipo, ArrayList<Departamento> listaDepartamento, ArrayList<ListaCandidata> listaCandidatas) {
         this.dataComeco = dataComeco;
         this.dataFim = dataFim;
         this.titulo = titulo;
         this.descricao = descricao;
+        this.tipo = tipo;
         this.listaDepartamento = listaDepartamento;
         this.listaCandidatas = listaCandidatas;
         this.listaCandidatas.add(new ListaCandidata("Voto em Branco"));
@@ -93,6 +95,14 @@ public class Eleicao implements Serializable {
 
     public ArrayList<Voto> getListaVotos(){
         return this.listaVotos;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
     public void addVoto(Voto voto) {

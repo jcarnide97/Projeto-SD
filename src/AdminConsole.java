@@ -184,9 +184,22 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
             String titulo = scEleicao.nextLine();
             System.out.print("Descrição: ");
             String descricao = scEleicao.nextLine();
+            System.out.println("Tipo:\n[1] estudante\n[2] docente\n[3] funcionário");
+            int tipo;
+            do {
+                System.out.print(">>> ");
+                tipo = scEleicao.nextInt();
+            } while (tipo < 1 || tipo > 3);
             ArrayList<Departamento> departamentos = new ArrayList<>();
             ArrayList<ListaCandidata> listaCandidata = new ArrayList<>();
-            Eleicao novaEleicao = new Eleicao(dataComeco, dataFim, titulo, descricao, departamentos, listaCandidata);
+            Eleicao novaEleicao;
+            if (tipo == 1) {
+                novaEleicao = new Eleicao(dataComeco, dataFim, titulo, descricao, "estudante", departamentos, listaCandidata);
+            } else if (tipo == 2) {
+                novaEleicao = new Eleicao(dataComeco, dataFim, titulo, descricao, "docente", departamentos, listaCandidata);
+            } else {
+                novaEleicao = new Eleicao(dataComeco, dataFim, titulo, descricao, "funcionário", departamentos, listaCandidata);
+            }
             while (true) {
                 try {
                     rmi.addEleicao(novaEleicao);

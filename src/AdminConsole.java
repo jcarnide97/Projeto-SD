@@ -228,6 +228,7 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
                     reconectarRMI();
                 }
             }
+
             for (int i = 0; i < eleicoes.size(); i++) {
                 if (novaEleicao.getTitulo().toUpperCase().equals(rmi.getListaEleicoes().get(i).getTitulo().toUpperCase()) && (novaEleicao.getDescricao().toUpperCase().equals(rmi.getListaEleicoes().get(i).getDescricao().toUpperCase()))){
                     rmi.removeEleicao(i);
@@ -270,10 +271,13 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
                 System.out.println("Ainda não foram criadas eleições!");
                 return null;
             }
+            ArrayList<Eleicao> eleis = new ArrayList<>();
             for (Eleicao e : listaEleicoes) {
+
                 if (!e.votacaoAberta() && e.votacaoAcabou()) {
-                    i++;
                     System.out.println("[" + i + "] " + e.getTitulo());
+                    eleis.add(e);
+                    i++;
                 }
             }
             if (i == 0) {
@@ -285,8 +289,8 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
             do {
                 System.out.print("Selecione uma eleicao: ");
                 opcao = sc.nextInt();
-            } while (opcao <= 0 || opcao > listaEleicoes.size());
-            return listaEleicoes.get(opcao - 1);
+            } while (opcao < 0 || opcao >= eleis.size());
+            return eleis.get(opcao);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -639,6 +643,7 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
     /**
      * Método para reconectar com o servidor RMI em caso de failover
      */
+    
     public void reconectarRMI() {
         int sleep = 1000;
         while (true) {
@@ -705,7 +710,7 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
      * Menu principal da consola de administração
      */
     public void adminConsoleMenu() {
-        // eVotingStats(this.rmi);
+        //eVotingStats(this.rmi);
         System.out.println("\teVoting Console Admin Main Menu");
         System.out.println("Selecione uma opção:\n" +
                 "[0] Criar Departamento\n" +

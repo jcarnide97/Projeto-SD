@@ -61,10 +61,8 @@ public class MulticastClient extends Thread {
 }
 
 class MulticastUser extends Thread {
-    private String MULTICAST_ADDRESS = "224.0.224.0";
     private String groupAddr;
     private int port;
-    private String state = "locked";
 
     public MulticastUser(String mensagem) {
         this.groupAddr = mensagem.split(",")[0];
@@ -73,23 +71,27 @@ class MulticastUser extends Thread {
     }
 
     public void run() {
-        MulticastSocket socket = null;
         System.out.println(this.getName() + " ready...");
         try {
-            socket = new MulticastSocket(port);  // create socket without binding it (only for sending)
-            //Scanner keyboardScanner = new Scanner(System.in);
             String newState;
             while(true){
                 while (true) {
                     newState = "lock";
-                    socket = new MulticastSocket(port);  // create socket and bind it
+                    MulticastSocket socket = null;
+                    socket = new MulticastSocket(this.port);  // create socket and bind it
                     InetAddress group = InetAddress.getByName(this.groupAddr);
                     socket.joinGroup(group);
                     byte[] buffer3 = new byte[256];
                     DatagramPacket packet2 = new DatagramPacket(buffer3, buffer3.length);
-                    socket.receive(packet2);
-                    newState = new String(packet2.getData(), 0, packet2.getLength());
+                    socket.setSoTimeout(1000);
+                    try{
+                        socket.receive(packet2);
+                    }catch(SocketTimeoutException e){
+                        break;
+                    }
 
+                    newState = new String(packet2.getData(), 0, packet2.getLength());
+                    System.out.println(newState);
                     if(newState.equals("unlock")){
                         System.out.println("Terminal desbloqueado!\n============\n============\n============\n============\n\n");
                         socket = new MulticastSocket();
@@ -119,7 +121,7 @@ class MulticastUser extends Thread {
                         byte[] buffer = total.getBytes();
                         group = InetAddress.getByName(this.groupAddr);
                         socket.joinGroup(group);
-                        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, port);
+                        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, this.port);
                         socket.send(packet);
                         byte[] buffer2 = new byte[1000];
                         DatagramPacket reply = new DatagramPacket(buffer2, buffer2.length);
@@ -140,10 +142,9 @@ class MulticastUser extends Thread {
                                 } while (opcaoLista < 0 || opcaoLista > listasFinais.length-1);
                                 String resposta = String.valueOf(opcaoLista);
                                 byte[] buffer4 = resposta.getBytes();
-                                DatagramPacket packet3 = new DatagramPacket(buffer4, buffer4.length, group, port);
+                                DatagramPacket packet3 = new DatagramPacket(buffer4, buffer4.length, group, this.port);
                                 socket.send(packet3);
                                 System.out.println("Voto Registado\nTerminal bloqueado!\n============\n============\n============\n============\n\n\n\n");
-                                break;
                             }
                         } catch (SocketTimeoutException e){
                             System.out.println("À espera que algo aconteça...");
@@ -159,8 +160,6 @@ class MulticastUser extends Thread {
 
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            socket.close();
         }
     }
 }

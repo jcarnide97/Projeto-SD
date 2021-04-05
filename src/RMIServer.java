@@ -121,6 +121,9 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
      */
     synchronized public void addEleicao(Eleicao eleicao) throws RemoteException {
         this.listaEleicoes.add(eleicao);
+        for(Eleicao elei:this.listaEleicoes){
+            System.out.println(elei.getTitulo());
+        }
         guardaDatabase();
     }
 

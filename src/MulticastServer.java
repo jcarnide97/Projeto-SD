@@ -237,7 +237,6 @@ public class MulticastServer extends Thread implements Serializable {
                                         for(Voto v : votos){
                                             if(v.getEleitor().getNumero().equals(numero)){
                                                 checaUser=true;
-                                                System.out.println("here");
                                                 break;
                                             }
                                         }
@@ -255,7 +254,6 @@ public class MulticastServer extends Thread implements Serializable {
                                 break;
                             }
                         }
-
                         ver = autenticacao(nome,numero,tipo,eleicoes.get(opcaoEleicao));
                         if(ver && !checaUser){
                             MulticastSocket socket = null;
@@ -263,40 +261,47 @@ public class MulticastServer extends Thread implements Serializable {
                                 socket = new MulticastSocket();  // create socket and bind it
                                 InetAddress group = InetAddress.getByName(groupAddr);
                                 socket.joinGroup(group);
-                                try {
-                                    socket = new MulticastSocket();  // create socket without binding it (only for sending)
+                                while(true){
+                                    try {
+                                        socket = new MulticastSocket();  // create socket without binding it (only for sending)
+                                        String message = "unlock";
+                                        byte[] buffer3 = message.getBytes();
+                                        InetAddress group2 = InetAddress.getByName(groupAddr);
+                                        int portinho = 4321;
+                                        ArrayList<MulticastServer> mesas2;
+                                        while (true) {
+                                            try {
+                                                mesas2 = rmi.getMesasVoto();
+                                                break;
+                                            } catch (RemoteException re) {
+                                                reconectarRMI();
+                                            }
+                                        }
+                                        for(MulticastServer mesa: mesas2){
+                                            if(mesa.groupAddr.equals(groupAddr)){
+                                                if(!mesa.terminais[0]){
+                                                    portinho = 4321;
+                                                }
+                                                else if(!mesa.terminais[1]){
+                                                    portinho = 4322;
+                                                }
+                                                break;
+                                            }
+                                        }
 
-                                    String message = "unlock";
-                                    byte[] buffer3 = message.getBytes();
-                                    InetAddress group2 = InetAddress.getByName(groupAddr);
-                                    int portinho = 4321;
-                                    ArrayList<MulticastServer> mesas2;
-                                    while (true) {
-                                        try {
-                                            mesas2 = rmi.getMesasVoto();
-                                            break;
-                                        } catch (RemoteException re) {
-                                            reconectarRMI();
-                                        }
+                                        DatagramPacket packet = new DatagramPacket(buffer3, buffer3.length, group, portinho);
+                                        System.out.println(groupAddr);
+                                        System.out.println(packet.getPort());
+                                        socket.send(packet);
+                                        break;
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    } finally {
+                                        socket.close();
                                     }
-                                    for(MulticastServer mesa: mesas2){
-                                        if(mesa.groupAddr.equals(groupAddr)){
-                                            if(!mesa.terminais[0]){
-                                                portinho = 4321;
-                                            }
-                                            else if(!mesa.terminais[1]){
-                                                portinho = 4322;
-                                            }
-                                            break;
-                                        }
-                                    }
-                                    DatagramPacket packet = new DatagramPacket(buffer3, buffer3.length, group, portinho);
-                                    socket.send(packet);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                } finally {
-                                    socket.close();
+
                                 }
+
                             } catch (IOException e) {
                                 e.printStackTrace();
                             } finally {
@@ -586,8 +591,7 @@ class MulticastReceiver extends Thread{
 
     public void run(){
         MulticastSocket socket = null;
-        MulticastServer server = new MulticastServer();
-        server.start();
+
         try {
             MulticastLibrary rmi = (MulticastLibrary) Naming.lookup("rmi://localhost:7000/RMI_Server");
             MulticastReceiver multiserver = new MulticastReceiver(rmi);

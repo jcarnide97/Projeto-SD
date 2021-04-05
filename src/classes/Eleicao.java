@@ -210,7 +210,7 @@ public class Eleicao implements Serializable {
             else {
                 System.out.println("\tNúmero de votos da lista " + lista.getNome() + "= " + conta);
                 percVotos = (conta/totalVotos)*100;
-                System.out.println("\tPercentagem de votos da lista " + lista.getNome() + "= " + percVotos);
+                System.out.println("\tPercentagem de votos da lista " + lista.getNome() + "= " + df.format(percVotos));
             }
         }
     }

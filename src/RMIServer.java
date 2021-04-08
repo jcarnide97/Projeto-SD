@@ -97,6 +97,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         for (Departamento d : listaDepartamentos) {
             if ((user.getDepartamento().getNome().toUpperCase().equals(d.getNome().toUpperCase()))) {
                 user.addUser(listaUsers, d);
+                guardaDatabase();
             }
         }
         return false;

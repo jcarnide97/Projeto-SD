@@ -290,8 +290,8 @@ public class MulticastServer extends Thread implements Serializable {
                                         }
 
                                         DatagramPacket packet = new DatagramPacket(buffer3, buffer3.length, group, portinho);
-                                        System.out.println(groupAddr);
-                                        System.out.println(packet.getPort());
+                                        //System.out.println(groupAddr);
+                                        //System.out.println(packet.getPort());
                                         socket.send(packet);
                                         break;
                                     } catch (IOException e) {

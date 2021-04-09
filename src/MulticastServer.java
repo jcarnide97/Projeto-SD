@@ -639,13 +639,13 @@ class MulticastReceiver extends Thread{
                                                         if(dep.getNome().equals(mesa.getDepartamento().getNome())){
                                                             Date date = new Date(System.currentTimeMillis());
                                                             Voto v = new Voto(user,elei.getListaCandidatas().get(i),dep,date);
-                                                            try{
-                                                                while(true){
+                                                            while (true) {
+                                                                try {
                                                                     rmi.addVotos(elei,v);
                                                                     break;
+                                                                } catch (RemoteException e){
+                                                                    reconectarRMI();
                                                                 }
-                                                            }catch (RemoteException e){
-                                                                reconectarRMI();
                                                             }
                                                             break;
                                                         }

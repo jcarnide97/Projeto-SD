@@ -184,11 +184,11 @@ public class Eleicao implements Serializable {
     }
 
     public void printEleicao() {
-        System.out.println(titulo);
-        System.out.println(descricao);
+        System.out.println("Eleição: " + titulo);
+        System.out.println("Descrição: " + descricao);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-        System.out.println("Inicio: " + dateFormat.format(dataComeco));
-        System.out.println("Fim: " + dateFormat.format(dataFim));
+        System.out.println("Data início: " + dateFormat.format(dataComeco));
+        System.out.println("Data fim: " + dateFormat.format(dataFim));
         float totalVotos = this.listaVotos.size();
         System.out.println("Total de votos: " + (int)totalVotos);
         float percVotos;
@@ -204,13 +204,15 @@ public class Eleicao implements Serializable {
                 percVotos = (conta/totalVotos)*100;
                 System.out.println("\tPercentagem de votos em branco = " + df.format(percVotos));
             }
-            else if (lista.getNome().equals("Voto Nulo")){
+            else if (lista.getNome().equals("Voto Nulo")) {
+                System.out.println("\tNúmero de votos nulos = " + conta);
                 percVotos = (conta/totalVotos)*100;
+                System.out.println("\tPercentagem de votos nulos = " + df.format(percVotos));
             }
             else {
-                System.out.println("\tNúmero de votos da lista " + lista.getNome() + "= " + conta);
+                System.out.println("\tNúmero de votos da lista " + lista.getNome() + " = " + conta);
                 percVotos = (conta/totalVotos)*100;
-                System.out.println("\tPercentagem de votos da lista " + lista.getNome() + "= " + df.format(percVotos));
+                System.out.println("\tPercentagem de votos da lista " + lista.getNome() + " = " + df.format(percVotos));
             }
         }
     }

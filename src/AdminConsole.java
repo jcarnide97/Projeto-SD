@@ -557,43 +557,38 @@ public class AdminConsole extends UnicastRemoteObject implements Serializable {
      * Opção 8 (12) - Mostrar eleições em tempo real
      */
     public void eleicoesTempoReal() {
-        ArrayList<MulticastServer> mesasVoto;
+        ArrayList<String> onlineUsers;
         while (true) {
             try {
-                mesasVoto = rmi.getMesasVoto();
+                onlineUsers = rmi.getLoggedUsers();
                 break;
             } catch (RemoteException re) {
                 reconectarRMI();
             }
         }
-        int i = 0;
-        if (mesasVoto.isEmpty()) {
-            System.out.println("Não existem mesas de voto!");
-        } else {
-            System.out.println("Mesas de voto abertas:");
-            for (MulticastServer mesa : mesasVoto) {
-                if (mesa.getEstadoMesaVoto()) {
-                    i++;
-                    System.out.println("[" + i + "] " + mesa.getDepartamento().getNome());
-                }
+        if (onlineUsers.isEmpty()) {
+            System.out.println("Não há utilizadores online!");
+        }
+        else {
+            System.out.println("Utilizadores Online:");
+            for (String user : onlineUsers) {
+                System.out.println(">>> " + user);
             }
-            if (i == 0) {
-                System.out.println("Não existem mesas de voto ativas!");
-            } else {
-                Scanner sc = new Scanner(System.in);
-                int opcao;
-                do {
-                    System.out.print(">>> ");
-                    opcao = sc.nextInt();
-                } while (opcao < 1 || opcao > mesasVoto.size());
-                MulticastServer mesaEscolhida = mesasVoto.get(opcao - 1);
-                System.out.println("Eleições a decorrer: ");
-                for (Eleicao eleicao : mesaEscolhida.getListaEleicoes()) {
-                    if (eleicao.votacaoAberta()) {
-                        System.out.println(eleicao.getTitulo());
-                        eleicao.numVotosAtual();
-                    }
-                }
+        }
+        ArrayList<Eleicao> eleicoes;
+        while (true) {
+            try {
+                eleicoes = rmi.getListaEleicoes();
+                break;
+            } catch (RemoteException re) {
+                reconectarRMI();
+            }
+        }
+        System.out.println("Eleições abertas:");
+        for (Eleicao eleicao : eleicoes) {
+            if (eleicao.votacaoAberta()) {
+                System.out.println(eleicao.getTitulo());
+                eleicao.numVotosAtual();
             }
         }
     }

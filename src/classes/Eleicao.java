@@ -216,7 +216,7 @@ public class Eleicao implements Serializable {
     }
 
     public void numVotosAtual() {
-        System.out.println("Voto até ao momento = " + this.listaVotos.size());
+        System.out.println("Votos até ao momento = " + this.listaVotos.size());
     }
 
 }

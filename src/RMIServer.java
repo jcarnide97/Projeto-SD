@@ -141,6 +141,10 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         return mesasVoto;
     }
 
+    synchronized public void numAtualVotos(Eleicao eleicao) {
+        eleicao.numVotosAtual();
+    }
+
     synchronized public void addMesaVoto(MulticastServer mesaVoto) {
         mesasVoto.add(mesaVoto);
         guardaDatabase();

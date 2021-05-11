@@ -6,6 +6,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import meta1.ClientLibrary;
 import meta1.MulticastLibrary;
+import meta1.classes.Departamento;
 
 public class eVotingBean extends UnicastRemoteObject {
     private static final long serialVersionUID = 1L;
@@ -32,5 +33,10 @@ public class eVotingBean extends UnicastRemoteObject {
     public boolean userLogin() throws RemoteException {
         return rmi.userLogin(this.nome, this.password);
     }
+
+    public Departamento getDepartamento(String departamento) throws RemoteException {
+        return rmi.getDepartamento(departamento);
+    }
+
 
 }

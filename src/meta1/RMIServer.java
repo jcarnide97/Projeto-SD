@@ -374,6 +374,16 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         new Thread(new UDPServer()).start();
     }
 
+    // META 2
+    public Departamento getDepartamento(String departamento) throws RemoteException {
+        for (Departamento dep : listaDepartamentos) {
+            if (departamento.equals(dep.getNome())) {
+                return dep;
+            }
+        }
+        return null;
+    }
+
     public static void main(String[] args) throws RemoteException {
         RMIServer rmiServer = null;
         try {

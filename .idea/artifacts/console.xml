@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="Projeto-SD:jar2">
-    <output-path>$PROJECT_DIR$/out/artifacts/Projeto_SD_jar2</output-path>
+  <artifact type="jar" name="console">
+    <output-path>$PROJECT_DIR$/out/artifacts/console</output-path>
     <root id="archive" name="console.jar">
       <element id="directory" name="META-INF">
         <element id="file-copy" path="$PROJECT_DIR$/src/jar/console/META-INF/MANIFEST.MF" />

@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
+import meta1.ClientLibrary;
 
 public class eVotingBean extends UnicastRemoteObject {
     private static final long serialVersionUID = 1L;
@@ -22,7 +23,7 @@ public class eVotingBean extends UnicastRemoteObject {
                 this.rmi = (ClientLibrary) Naming.lookup("rmi://localhost:7000/RMI_Server");
                 check = true;
             } catch (RemoteException | NotBoundException | MalformedURLException e) {
-                System.out.println("RMI ");
+                System.out.println("Exception in Primary RMI Server: " + e.getMessage());
             }
         }
     }

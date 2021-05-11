@@ -1,3 +1,5 @@
+package meta1;
+
 import java.io.*;
 import java.net.*;
 import java.rmi.Naming;
@@ -10,7 +12,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import classes.*;
+import meta1.classes.*;
 
 import javax.xml.crypto.Data;
 

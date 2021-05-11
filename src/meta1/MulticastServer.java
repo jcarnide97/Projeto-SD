@@ -1,3 +1,5 @@
+package meta1;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -11,7 +13,7 @@ import java.rmi.RemoteException;
 import java.time.Duration;
 import java.util.*;
 import java.io.InputStreamReader;
-import classes.*;
+import meta1.classes.*;
 
 import static java.lang.System.exit;
 

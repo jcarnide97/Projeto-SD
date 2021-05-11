@@ -1,3 +1,5 @@
+package meta1;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,7 +11,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import classes.*;
+import meta1.classes.*;
 import static java.lang.System.exit;
 
 public class AdminConsole extends UnicastRemoteObject implements Serializable {

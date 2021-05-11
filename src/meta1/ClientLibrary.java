@@ -1,8 +1,10 @@
+package meta1;
+
 import java.rmi.*;
 import java.text.ParseException;
 import java.util.ArrayList;
 
-import classes.*;
+import meta1.classes.*;
 
 public interface ClientLibrary extends Remote {
     public void addDepartamento(Departamento dep) throws RemoteException;

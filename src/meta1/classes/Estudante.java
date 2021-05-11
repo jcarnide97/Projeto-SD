@@ -1,26 +1,27 @@
-package classes;
+package meta1.classes;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Docente extends User implements Serializable {
+public class Estudante extends User implements Serializable {
 
-    public Docente(String nome, String numero, String telefone, String morada, String password, Departamento departamento, String validadeCC) {
+    public Estudante(String nome, String numero, String telefone, String morada, String password, Departamento departamento, String validadeCC) {
         super(nome, numero, telefone, morada, password, departamento, validadeCC);
     }
 
     @Override
     public void addUser(ArrayList<User> listaUsers, Departamento dep) {
+        dep.addEstudante(this);
         listaUsers.add(this);
     }
 
     @Override
     public boolean isEstudante() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isDocente() {
-        return true;
+        return false;
     }
 
     @Override
@@ -30,7 +31,7 @@ public class Docente extends User implements Serializable {
 
     @Override
     public String toString() {
-        return "Docente{" +
+        return "Estudante{" +
                 "nome='" + nome + '\'' +
                 ", numero=" + numero +
                 ", telefone=" + telefone +

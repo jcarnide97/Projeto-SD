@@ -1,3 +1,5 @@
+package meta1;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.MulticastSocket;
@@ -7,7 +9,7 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.sql.SQLOutput;
 import java.util.Scanner;
-import classes.*;
+import meta1.classes.*;
 
 /**
  * The MulticastClient class joins a multicast group and loops receiving

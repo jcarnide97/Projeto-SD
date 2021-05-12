@@ -22,7 +22,7 @@ public class LoginAction extends Action implements SessionAware {
                 this.session.put("nome", this.nome);
                 this.session.put("password", this.password);
                 this.session.put("loggedin", true);
-                return "ADMIN";
+                return "admin";
             } else {
                 return LOGIN;
             }

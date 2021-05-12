@@ -384,6 +384,10 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         return null;
     }
 
+    public void logout(String nome) throws RemoteException {
+        this.loggedUsers.remove(nome);
+    }
+
     public static void main(String[] args) throws RemoteException {
         RMIServer rmiServer = null;
         try {

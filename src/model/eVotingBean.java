@@ -38,5 +38,27 @@ public class eVotingBean extends UnicastRemoteObject {
         return rmi.getDepartamento(departamento);
     }
 
+    public String getNome() {
+        return nome;
+    }
 
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void logout(String nome) {
+        try {
+            this.rmi.logout(nome);
+        } catch (RemoteException re) {
+            re.printStackTrace();
+        }
+    }
 }

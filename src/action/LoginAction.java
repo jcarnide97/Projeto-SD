@@ -15,8 +15,9 @@ public class LoginAction extends Action implements SessionAware {
             this.getEVotingBean().setPassword(this.password);
             if (this.nome.equals("admin") && this.password.equals("admin")) {
                 this.session.put("nome", this.nome);
+                this.session.put("password", this.password);
                 this.session.put("loggedin", true);
-                return "administrador";
+                return "admin";
             } else if (this.getEVotingBean().userLogin()) {
                 this.session.put("nome", this.nome);
                 this.session.put("password", this.password);

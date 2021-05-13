@@ -13,7 +13,7 @@ and should reside on the classpath of the webapp (generally /WEB-INF/classes). -
   <constant name="struts.devMode" value="true" />
   <constant name="struts.ui.theme" value="simple" />
 
-  <package name="hey" extends="struts-default">
+  <package name="eVoting" extends="struts-default">
 
       <interceptors>
           <interceptor name="loginInterceptor" class="interceptor.LoginInterceptor"/>
@@ -26,7 +26,7 @@ and should reside on the classpath of the webapp (generally /WEB-INF/classes). -
       <default-action-ref name="index" />
 
       <global-results>
-          <result name="error" type="redirect">/error.jsp</result>
+          <result name="error">/error.jsp</result>
       </global-results>
 
       <global-exception-mappings>
@@ -39,16 +39,10 @@ and should reside on the classpath of the webapp (generally /WEB-INF/classes). -
 
       <action name="login" class="action.LoginAction" method="execute">
           <!--<result name="success" type="redirect">/votar.jsp</result>-->
-          <result name="administrador" type="redirect">/adminMenu.jsp</result>
+          <result name="admin">/adminMenu.jsp</result>
+          <result name="login">/index.jsp</result>
       </action>
 
-      <action name="logout" class="action.LoginAction" method="logout">
-          <result name="success" type="redirect">/index.jsp</result>
-      </action>
-
-      <action name="b1">
-          <result type="redirect">/adminMenu.jsp</result>
-      </action>
 
   </package>
 

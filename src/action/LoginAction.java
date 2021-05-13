@@ -13,16 +13,15 @@ public class LoginAction extends Action implements SessionAware {
         if ((this.nome != null && !nome.equals("")) || (this.password != null && !password.equals(""))) {
             this.getEVotingBean().setNome(this.nome);
             this.getEVotingBean().setPassword(this.password);
-            if (this.getEVotingBean().userLogin()) {
+            if (this.nome.equals("admin") && this.password.equals("admin")) {
+                this.session.put("nome", this.nome);
+                this.session.put("loggedin", true);
+                return "administrador";
+            } else if (this.getEVotingBean().userLogin()) {
                 this.session.put("nome", this.nome);
                 this.session.put("password", this.password);
                 this.session.put("loggedin", true);
                 return SUCCESS;
-            } else if (this.nome.equals("admin") && this.password.equals("admin")) {
-                this.session.put("nome", this.nome);
-                this.session.put("password", this.password);
-                this.session.put("loggedin", true);
-                return "admin";
             } else {
                 return LOGIN;
             }

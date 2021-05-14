@@ -22,8 +22,8 @@ public class CriarEleicaoAction extends Action implements SessionAware {
     @Override
     public String execute() throws Exception {
         if (titulo != null && descricao != null && inicio != null && fim != null && tipo != null) {
-            dataComeco = new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(inicio);
-            dataFim = new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(fim);
+            Date dataComeco = new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(inicio);
+            Date dataFim = new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(fim);
             ArrayList<Departamento> departamentos = new ArrayList<>();
             ArrayList<ListaCandidata> listaCandidata = new ArrayList<>();
             if (tipo.toUpperCase().equals("ESTUDANTE")) {
@@ -85,21 +85,5 @@ public class CriarEleicaoAction extends Action implements SessionAware {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
-    }
-
-    public Date getDataComeco() {
-        return dataComeco;
-    }
-
-    public void setDataComeco(Date dataComeco) {
-        this.dataComeco = dataComeco;
-    }
-
-    public Date getDataFim() {
-        return dataFim;
-    }
-
-    public void setDataFim(Date dataFim) {
-        this.dataFim = dataFim;
     }
 }

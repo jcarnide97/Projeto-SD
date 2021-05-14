@@ -13,6 +13,9 @@
         </div>
         <h2>Consola de Administração</h2>
         <div class="container">
+            <form action="button0.action">
+                <!--<button>Criar Departamento</button>-->
+            </form>
             <form action="button1.action">
                 <button>Criar Departamento</button>
             </form>

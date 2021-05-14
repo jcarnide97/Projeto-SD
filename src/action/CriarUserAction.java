@@ -48,32 +48,64 @@ public class CriarUserAction extends Action implements SessionAware {
         return ERROR;
     }
 
+    public String getNome() {
+        return nome;
+    }
+
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getNumero() {
+        return numero;
     }
 
     public void setNumero(String numero) {
         this.numero = numero;
     }
 
+    public String getDepartamento() {
+        return departamento;
+    }
+
     public void setDepartamento(String departamento) {
         this.departamento = departamento;
+    }
+
+    public String getTelefone() {
+        return telefone;
     }
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
 
+    public String getMorada() {
+        return morada;
+    }
+
     public void setMorada(String morada) {
         this.morada = morada;
+    }
+
+    public String getValidadeCC() {
+        return validadeCC;
     }
 
     public void setValidadeCC(String validadeCC) {
         this.validadeCC = validadeCC;
     }
 
+    public String getTipo() {
+        return tipo;
+    }
+
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public void setPassword(String password) {

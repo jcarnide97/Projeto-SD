@@ -39,12 +39,19 @@ and should reside on the classpath of the webapp (generally /WEB-INF/classes). -
           <result name="success">/index.jsp</result>
       </action>
 
-      <action name="b1">
-          <result>/adminMenu.jsp</result>
-      </action>
-
       <action name="cancelar">
           <result type="redirect">/adminMenu.jsp</result>
+      </action>
+
+      <action name="button1">
+          <result>/criarDepartamento.jsp</result>
+          <result name="login" type="redirect">/index.jsp</result>
+      </action>
+
+      <action name="criarDepartamento" class="action.CriarDepartamentoAction" method="execute">
+          <result name="success">/adminMenu.jsp</result>
+          <result name="error">/criarDepartamento.jsp</result>
+          <result name="login" type="redirect">/index.jsp</result>
       </action>
 
       <action name="button2">

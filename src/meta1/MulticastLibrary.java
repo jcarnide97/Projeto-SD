@@ -32,7 +32,7 @@ public interface MulticastLibrary extends Remote {
     public Boolean checkEleicaoTime(Eleicao eleicao) throws RemoteException;
     public void logout(String nome, String password) throws RemoteException;
     public void addVotos(Eleicao elei, Voto voto) throws RemoteException;
-    // META 2
+    // META 2 --- Método utilizados para a meta 2 que não estavam posteriormente implementados
     public Departamento getDepartamento(String departamento) throws RemoteException;
     public void logout(String nome) throws RemoteException;
     public void addUser(String nome, String pass) throws RemoteException;

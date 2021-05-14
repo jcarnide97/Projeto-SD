@@ -4,6 +4,8 @@ import java.net.MalformedURLException;
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+
 import meta1.ClientLibrary;
 import meta1.MulticastLibrary;
 import meta1.classes.Departamento;
@@ -69,5 +71,23 @@ public class eVotingBean extends UnicastRemoteObject {
             rmi.addUser(user.getNome(), user.getPassword());
         }
         return res;
+    }
+
+    public boolean criarDepartamento(String nomeDep) {
+        ArrayList<Departamento> departamentos = null;
+        try {
+            departamentos = this.rmi.getListaDepartamentos();
+            for (Departamento dep : departamentos) {
+                if ((nomeDep.toUpperCase().equals(dep.getNome().toUpperCase()))) {
+                    System.out.println("Departamento já existe");
+                    return false;
+                }
+            }
+            Departamento departamento = new Departamento(nomeDep, new ArrayList<>());
+            this.rmi.addDepartamento(departamento);
+        } catch (RemoteException re) {
+            re.printStackTrace();
+        }
+        return true;
     }
 }

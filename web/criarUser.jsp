@@ -42,7 +42,7 @@
         </form>
         <br>
         <form action="cancelar">
-            <button>Cancelar</button>
+            <button type="submit">Cancelar</button>
         </form>
     </div>
 </body>

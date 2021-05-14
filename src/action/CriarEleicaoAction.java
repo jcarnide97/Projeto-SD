@@ -14,9 +14,7 @@ public class CriarEleicaoAction extends Action implements SessionAware {
     private String titulo = null;
     private String descricao = null;
     private String inicio = null;
-    private Date dataComeco = null;
     private String fim = null;
-    private Date dataFim = null;
     private String tipo = null;
 
     @Override

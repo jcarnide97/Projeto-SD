@@ -20,13 +20,14 @@
             <s:textfield name="descricao"/>
             <br>
             <label>Data de Início (dd/mm/yyyy HH:MM)</label>
-            <s:textfield name="dataComeco"/>
+            <s:textfield name="inicio"/>
             <br>
             <label>Data de Fim (dd/mm/yyyy HH:MM)</label>
-            <s:textfield name="dataFim"/>
+            <s:textfield name="fim"/>
             <br>
             <label>Tipo de Eleição (estudante/docente/funcionário):</label>
             <s:textfield name="tipo"/>
+            <br>
             <button type="submit">Criar Eleição</button>
         </form>
         <br>

@@ -14,30 +14,33 @@
         <h2>Consola de Administração</h2>
         <div class="container">
             <form action="button1.action">
-                <button>Registar Utilizador</button>
+                <button>Criar Departamento</button>
             </form>
             <form action="button2.action">
-                <button>Criar Eleição</button>
+                <button>Registar Utilizador</button>
             </form>
             <form action="button3.action">
-                <button>Gerir Listas de Candidatos a uma Eleição</button>
+                <button>Criar Eleição</button>
             </form>
             <form action="button4.action">
-                <button>Gerir Mesas de Voto</button>
+                <button>Gerir Listas de Candidatos a uma Eleição</button>
             </form>
             <form action="button5.action">
-                <button>Alterar Propriedades de uma Eleição</button>
+                <button>Gerir Mesas de Voto</button>
             </form>
             <form action="button6.action">
-                <button>Saber Local de Voto dos Eleitores</button>
+                <button>Alterar Propriedades de uma Eleição</button>
             </form>
             <form action="button7.action">
-                <button>Ver Estado das Mesas de Voto</button>
+                <button>Saber Local de Voto dos Eleitores</button>
             </form>
             <form action="button8.action">
-                <button>Mostrar Eleições em Tempo Real</button>
+                <button>Ver Estado das Mesas de Voto</button>
             </form>
             <form action="button9.action">
+                <button>Mostrar Eleições em Tempo Real</button>
+            </form>
+            <form action="button10.action">
                 <button>Consultar Resultados de Eleições Passadas</button>
             </form>
             <br><br>

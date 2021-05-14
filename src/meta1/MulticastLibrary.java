@@ -35,4 +35,5 @@ public interface MulticastLibrary extends Remote {
     // META 2
     public Departamento getDepartamento(String departamento) throws RemoteException;
     public void logout(String nome) throws RemoteException;
+    public void addUser(String nome, String pass) throws RemoteException;
 }

@@ -100,6 +100,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
             if ((user.getDepartamento().getNome().toUpperCase().equals(d.getNome().toUpperCase()))) {
                 user.addUser(listaUsers, d);
                 guardaDatabase();
+                return true;
             }
         }
         return false;
@@ -386,6 +387,10 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
 
     public void logout(String nome) throws RemoteException {
         this.loggedUsers.remove(nome);
+    }
+
+    public void addUser(String nome, String pass) throws RemoteException {
+        this.usersAuth.put(nome, pass);
     }
 
     public static void main(String[] args) throws RemoteException {

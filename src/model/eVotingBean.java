@@ -5,10 +5,14 @@ import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import meta1.ClientLibrary;
 import meta1.MulticastLibrary;
 import meta1.classes.Departamento;
+import meta1.classes.Eleicao;
+import meta1.classes.ListaCandidata;
 import meta1.classes.User;
 
 public class eVotingBean extends UnicastRemoteObject {
@@ -88,6 +92,12 @@ public class eVotingBean extends UnicastRemoteObject {
         } catch (RemoteException re) {
             re.printStackTrace();
         }
+        return true;
+    }
+
+    public boolean criaEleicao(String titulo, String descricao, Date dataComeco, Date dataFim, String tipo, ArrayList<Departamento> listaDepartamento, ArrayList<ListaCandidata> listaCandidatas) throws RemoteException{
+        Eleicao eleicao = new Eleicao(dataComeco, dataFim, titulo, descricao, tipo, listaDepartamento, listaCandidatas);
+        this.rmi.addEleicao(eleicao);
         return true;
     }
 }

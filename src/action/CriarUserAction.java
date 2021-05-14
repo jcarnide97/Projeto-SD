@@ -29,7 +29,7 @@ public class CriarUserAction extends Action implements SessionAware {
                     case "DOCENTE":
                         novoUser = new Docente(nome, numero, telefone, morada, password, dep, validadeCC);
                         break;
-                    case "FUNCIONARIO":
+                    case "FUNCIONÁRIO":
                         novoUser = new Funcionario(nome, numero, telefone, morada, password, dep, validadeCC);
                         break;
                     default:

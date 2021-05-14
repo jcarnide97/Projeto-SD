@@ -21,11 +21,12 @@ public class Eleicao implements Serializable {
     public Eleicao() {
     }
 
-    public Eleicao(Date dataComeco, Date dataFim, String titulo, String descricao) {
+    public Eleicao(Date dataComeco, Date dataFim, String titulo, String descricao, String tipo) {
         this.dataComeco = dataComeco;
         this.dataFim = dataFim;
         this.titulo = titulo;
         this.descricao = descricao;
+        this.tipo = tipo;
     }
 
     public Eleicao(Date dataComeco, Date dataFim, String titulo, String descricao, String tipo, ArrayList<Departamento> listaDepartamento, ArrayList<ListaCandidata> listaCandidatas) {

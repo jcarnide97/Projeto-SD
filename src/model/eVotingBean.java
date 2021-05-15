@@ -10,6 +10,7 @@ import java.util.Date;
 
 import meta1.ClientLibrary;
 import meta1.MulticastLibrary;
+import meta1.MulticastServer;
 import meta1.classes.Departamento;
 import meta1.classes.Eleicao;
 import meta1.classes.ListaCandidata;
@@ -108,5 +109,51 @@ public class eVotingBean extends UnicastRemoteObject {
             re.printStackTrace();
         }
         return false;
+    }
+
+    public boolean criaMesaVoto(String departamento) {
+        try {
+            ArrayList<MulticastServer> mesasVoto = this.rmi.getMesasVoto();
+            for (MulticastServer mesaVoto : mesasVoto) {
+                if (mesaVoto.getDepartamento().getNome().toUpperCase().equals(departamento.toUpperCase())) {
+                    System.out.println("Departamento já com uma mesa associada");
+                    return false;
+                }
+            }
+            Departamento dep = rmi.getDepartamento(departamento);
+            if (dep != null) {
+                MulticastServer novaMesaVoto = new MulticastServer(dep);
+                rmi.addMesaVoto(novaMesaVoto);
+                return true;
+            }
+        } catch (RemoteException re) {
+            re.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean removeMesaVoto(String departamento) {
+        try {
+            ArrayList<MulticastServer> mesasVoto = this.rmi.getMesasVoto();
+            int i = 0;
+            for (MulticastServer mesaVoto : mesasVoto) {
+                if (mesaVoto.getDepartamento().getNome().toUpperCase().equals(departamento.toUpperCase())) {
+                    rmi.removeMesaVoto(i);
+                    return true;
+                }
+                i++;
+            }
+        } catch (RemoteException re) {
+            re.printStackTrace();
+        }
+        return false;
+    }
+
+    public ArrayList<Eleicao> getListaEleicoes() throws RemoteException {
+        return this.rmi.getListaEleicoes();
+    }
+
+    public ArrayList<MulticastServer> getMesasVoto() throws RemoteException {
+        return this.rmi.getMesasVoto();
     }
 }

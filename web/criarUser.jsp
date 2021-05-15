@@ -37,7 +37,7 @@
             <br>
             <label><b>Password:</b></label>
             <s:textfield name="password" type="password"/>
-            <br>
+            <br><br>
             <button type="submit">Criar User</button>
         </form>
         <br>

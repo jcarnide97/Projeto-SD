@@ -27,7 +27,7 @@
             <br>
             <label>Tipo de Eleição (estudante/docente/funcionário):</label>
             <s:textfield name="tipo"/>
-            <br>
+            <br><br>
             <button type="submit">Criar Eleição</button>
         </form>
         <br>

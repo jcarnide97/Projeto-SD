@@ -1,10 +1,9 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-    <title>Criar Lista Candidata</title>
+    <title>Gerir Mesas de Voto</title>
     <link rel="icon" type="image/png" href="resources/icon.png">
 </head>
 <body>
@@ -12,15 +11,21 @@
     <img src="resources/logo.png" alt="Avatar" class="avatar">
 </div>
 <div class="container">
-    <form action="criarListaCandidata" method="post">
-        <h2>Criar Lista Candidata</h2>
-        <label><b>Nome:</b></label>
-        <s:textfield name="nomeLista"/>
+    <form action="gerirMesasVoto" method="post">
+        <h2>Gerir Mesas de Voto</h2>
+        <h5>
+            (crie ou elimine mesas que dependendo do nome dos departamentos)
+            <br>
+            (preencha apenas um dos campos que desejar)
+        </h5>
         <br>
-        <label><b>Título da Eleição:</b></label>
-        <s:textfield name="tituloEleicao"/>
+        <label><b>Criar Mesa de Voto:</b></label>
+        <s:textfield name="criaMesa"/>
         <br><br>
-        <button type="submit">Criar Lista</button>
+        <label><b>Apagar Mesa de Voto:</b></label>
+        <s:textfield name="removeMesa"/>
+        <br><br>
+        <button type="submit">Confirmar</button>
     </form>
     <br>
     <form action="cancelar">

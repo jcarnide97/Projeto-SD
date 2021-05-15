@@ -15,7 +15,7 @@
             <h2>Criar Departamento</h2>
             <label><b>Nome:</b></label>
             <s:textfield name="nomeDep"/>
-            <br>
+            <br><br>
             <button type="submit">Criar Departamento</button>
         </form>
         <form action="cancelar">

@@ -87,6 +87,17 @@ and should reside on the classpath of the webapp (generally /WEB-INF/classes). -
           <result name="login">/index.jsp</result>
       </action>
 
+      <action name="button12">
+          <result>/listarEleicao.jsp</result>
+          <result name="login" type="redirect">/index.jsp</result>
+      </action>
+
+      <action name="listarEleicao" class="action.ListarEleicaoAction" method="execute">
+          <result name="success">/listarEleicao.jsp</result>
+          <result name="error">/listarEleicao.jsp</result>
+          <result name="login">/index.jsp</result>
+      </action>
+
       <action name="button5">
           <result>/gerirMesasVoto.jsp</result>
           <result name="login" type="redirect">/index.jsp</result>

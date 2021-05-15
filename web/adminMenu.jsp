@@ -28,6 +28,9 @@
             <form action="button4.action">
                 <button>Gerir Listas de Candidatos a uma Eleição</button>
             </form>
+            <form action="button12.action">
+                <button>Listar Eleições e Detalhes</button>
+            </form>
             <form action="button5.action">
                 <button>Gerir Mesas de Voto</button>
             </form>

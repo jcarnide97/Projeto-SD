@@ -119,6 +119,36 @@ and should reside on the classpath of the webapp (generally /WEB-INF/classes). -
           <result name="error">/alterarEleicao.jsp</result>
           <result name="login">/index.jsp</result>
       </action>
+
+      <action name="button8">
+          <result>/localVoto.jsp</result>
+          <result name="login" type="redirect">/index.jsp</result>
+      </action>
+
+      <action name="localVoto" class="action.LocalVotoAction" method="execute">
+          <result name="success">/localVoto.jsp</result>
+          <result name="error">/localVoto.jsp</result>
+          <result name="login">/index.jsp</result>
+      </action>
+
+      <action name="button9">
+          <result>/estadoMesasVoto.jsp</result>
+          <result name="login" type="redirect">/index.jsp</result>
+      </action>
+      <!-- action do estado da mesa de voto com WebSockets -->
+
+      <!-- Actions do botão 10 e da sua pagina precisão de WebSockets -->
+
+      <action name="button11">
+          <result>/eleicoesPassadas.jsp</result>
+          <result name="login" type="redirect">/index.jsp</result>
+      </action>
+
+      <action name="eleicoesPassadas" class="action.EleicoesPassadasAction" method="execute">
+          <result name="success">/eleicoesPassadas.jsp</result>
+          <result name="error">/eleicoesPassadas.jsp</result>
+          <result name="login" type="redirect">/index.jsp</result>
+      </action>
   </package>
 
 </struts>

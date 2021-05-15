@@ -182,6 +182,7 @@ public class Eleicao implements Serializable {
                 System.out.println("Hora Voto: "+voto.getHoraVoto());
             }
         }
+        System.out.println("-----------------------------");
     }
 
     public void printEleicao() {

@@ -158,4 +158,38 @@ public class eVotingBean extends UnicastRemoteObject {
     public ArrayList<MulticastServer> getMesasVoto() throws RemoteException {
         return this.rmi.getMesasVoto();
     }
+
+    public Eleicao removeEleicao(String nomeEleicao) throws RemoteException {
+        Eleicao eleicao;
+        ArrayList<Eleicao> listaEleicoes;
+        int iEleicao;
+        while (true) {
+            try {
+                listaEleicoes = this.rmi.getListaEleicoes();
+                break;
+            } catch (RemoteException re) {
+                this.ligarRMI();
+            }
+        }
+        for (int i = 0; i < listaEleicoes.size(); i++) {
+            if (nomeEleicao.toLowerCase().equals(listaEleicoes.get(i).getTitulo().toLowerCase())) {
+                iEleicao = i;
+                eleicao = listaEleicoes.get(i);
+                this.rmi.removeEleicao(iEleicao);
+                return eleicao;
+            }
+        }
+        return null;
+    }
+
+    public boolean addEleicao(Eleicao eleicao) {
+        while (true) {
+            try {
+                this.rmi.addEleicao(eleicao);
+                return true;
+            } catch (RemoteException re) {
+                this.ligarRMI();
+            }
+        }
+    }
 }

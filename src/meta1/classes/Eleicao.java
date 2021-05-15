@@ -190,6 +190,7 @@ public class Eleicao implements Serializable {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         System.out.println("Data início: " + dateFormat.format(dataComeco));
         System.out.println("Data fim: " + dateFormat.format(dataFim));
+        System.out.println("Tipo de eleição: " + tipo);
         float totalVotos = this.listaVotos.size();
         System.out.println("Total de votos: " + (int)totalVotos);
         float percVotos;

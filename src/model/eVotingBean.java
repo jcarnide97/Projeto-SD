@@ -100,4 +100,13 @@ public class eVotingBean extends UnicastRemoteObject {
         this.rmi.addEleicao(eleicao);
         return true;
     }
+
+    public boolean addListaCandidata(String nomeLista, String tituloEleicao) {
+        try {
+            return rmi.addListaCandidata(nomeLista, tituloEleicao);
+        } catch (RemoteException re) {
+            re.printStackTrace();
+        }
+        return false;
+    }
 }

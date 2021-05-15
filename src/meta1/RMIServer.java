@@ -393,6 +393,17 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         this.usersAuth.put(nome, pass);
     }
 
+    public boolean addListaCandidata(String nomeLista, String tituloEleicao) throws RemoteException {
+        for (Eleicao eleicao : listaEleicoes) {
+            if (eleicao.getTitulo().toUpperCase().equals(tituloEleicao.toUpperCase())) {
+                eleicao.addLista(new ListaCandidata(nomeLista));
+                guardaDatabase();
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void main(String[] args) throws RemoteException {
         RMIServer rmiServer = null;
         try {

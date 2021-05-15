@@ -222,4 +222,7 @@ public class Eleicao implements Serializable {
         System.out.println("Votos até ao momento = " + this.listaVotos.size());
     }
 
+    public void addLista(ListaCandidata listaCandidata) {
+        listaCandidatas.add(listaCandidata);
+    }
 }

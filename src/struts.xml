@@ -75,6 +75,17 @@ and should reside on the classpath of the webapp (generally /WEB-INF/classes). -
           <result name="error">/criarEleicao.jsp</result>
           <result name="login">/index.jsp</result>
       </action>
+
+      <action name="button4">
+          <result>/criarListaCandidata.jsp</result>
+          <result name="login" type="redirect">/index.jsp</result>
+      </action>
+
+      <action name="criarListaCandidata" class="action.CriarListaCandidataAction" method="execute">
+          <result name="success">/adminMenu.jsp</result>
+          <result name="error">/criarListaCandidata.jsp</result>
+          <result name="login">/index.jsp</result>
+      </action>
   </package>
 
 </struts>

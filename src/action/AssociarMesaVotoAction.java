@@ -19,6 +19,7 @@ public class AssociarMesaVotoAction extends Action implements SessionAware {
                     if (nomeDep.toUpperCase().equals(mesaVoto.getDepartamento().getNome().toUpperCase())) {
                         if (!mesaVoto.getListaEleicoes().contains(mesaVoto)) {
                             mesaVoto.addEleicao(eleicao);
+                            System.out.println("Mesa " + mesaVoto.getDepartamento().getNome() + " adicionada à eleição " + eleicao.getTitulo());
                             return SUCCESS;
                         }
                     }

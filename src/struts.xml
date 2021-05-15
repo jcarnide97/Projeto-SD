@@ -103,7 +103,11 @@ and should reside on the classpath of the webapp (generally /WEB-INF/classes). -
           <result name="login" type="redirect">/index.jsp</result>
       </action>
 
-
+      <action name="associarMesaVoto" class="action.AssociarMesaVotoAction" method="execute">
+          <result name="success">/adminMenu.jsp</result>
+          <result name="error">/associarMesaVoto.jsp</result>
+          <result name="login">/index.jsp</result>
+      </action>
   </package>
 
 </struts>

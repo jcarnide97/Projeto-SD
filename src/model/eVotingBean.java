@@ -124,6 +124,7 @@ public class eVotingBean extends UnicastRemoteObject {
             if (dep != null) {
                 MulticastServer novaMesaVoto = new MulticastServer(dep);
                 rmi.addMesaVoto(novaMesaVoto);
+                System.out.println(novaMesaVoto.getDepartamento().getNome() + "adicionado às mesas de voto");
                 return true;
             }
         } catch (RemoteException re) {
@@ -139,6 +140,7 @@ public class eVotingBean extends UnicastRemoteObject {
             for (MulticastServer mesaVoto : mesasVoto) {
                 if (mesaVoto.getDepartamento().getNome().toUpperCase().equals(departamento.toUpperCase())) {
                     rmi.removeMesaVoto(i);
+                    System.out.println("Mesa removida com sucesso");
                     return true;
                 }
                 i++;

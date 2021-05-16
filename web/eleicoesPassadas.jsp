@@ -17,7 +17,7 @@
         <s:textfield name="titulo"/>
         <br><br>
         <label><b>Resultados:</b></label>
-        <s:textarea style="width: 500px; height: 200px;" value="%{resultados}" />
+        <s:textarea style="width: 500px; height: 200px;" readonly="true" value="%{resultados}" />
         <br><br>
         <button type="submit">Pesquisar</button>
     </form>

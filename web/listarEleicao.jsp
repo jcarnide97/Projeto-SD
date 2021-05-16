@@ -19,7 +19,7 @@
         <br>
         <button type="submit">Ver Detalhes</button>
         <br>
-        <s:textarea style="width: 500px; height: 200px;" value="%{detalhesEleicao}"/>
+        <s:textarea style="width: 500px; height: 200px;" readonly="true" value="%{detalhesEleicao}"/>
     </form>
     <br>
     <form action="cancelar">

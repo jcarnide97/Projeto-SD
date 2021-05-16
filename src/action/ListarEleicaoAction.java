@@ -15,7 +15,7 @@ public class ListarEleicaoAction extends Action implements SessionAware {
     public String execute() {
         if (this.titulo != null && !titulo.equals("")) {
             try {
-                detalhesEleicao += "----------Detalhes----------\n";
+                detalhesEleicao += "----------Detalhes Eleição----------\n";
                 for (Eleicao eleicao : this.getEVotingBean().getListaEleicoes()) {
                     if (eleicao.getTitulo().toLowerCase().equals(titulo.toLowerCase())) {
                         detalhesEleicao += "Titulo: " + eleicao.getTitulo() + "\n";

@@ -19,7 +19,7 @@
         <br>
         <button type="submit">Confirmar</button>
         <br>
-        <s:textarea style="width: 500px; height: 200px;" value="%{listaLocais}"/>
+        <s:textarea style="width: 500px; height: 200px;" readonly="true" value="%{listaLocais}"/>
     </form>
     <br>
     <form action="cancelar">

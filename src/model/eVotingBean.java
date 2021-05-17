@@ -38,6 +38,16 @@ public class eVotingBean extends UnicastRemoteObject {
         }
     }
 
+    public User getUser(String nome, String password) throws RemoteException{
+       ArrayList<User> all = rmi.getListaUsers();
+       for(User utilizador : all){
+           if(utilizador.getNome().equals(nome) && utilizador.getPassword().equals(password)){
+               return utilizador;
+           }
+       }
+       return null;
+    }
+
     public boolean userLogin() throws RemoteException {
         return rmi.userLogin(this.nome, this.password);
     }
@@ -153,6 +163,16 @@ public class eVotingBean extends UnicastRemoteObject {
 
     public ArrayList<Eleicao> getListaEleicoes() throws RemoteException {
         return this.rmi.getListaEleicoes();
+    }
+
+    public Eleicao getEleicao(String nomeEleicao) throws RemoteException{
+        ArrayList<Eleicao> eleicoes= this.rmi.getListaEleicoes();
+        for(Eleicao eleicao: eleicoes){
+            if(eleicao.getTitulo().equals(nomeEleicao)){
+                return eleicao;
+            }
+        }
+        return null;
     }
 
     public ArrayList<MulticastServer> getMesasVoto() throws RemoteException {

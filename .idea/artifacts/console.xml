@@ -6,6 +6,12 @@
         <element id="file-copy" path="$PROJECT_DIR$/src/jar/console/META-INF/MANIFEST.MF" />
       </element>
       <element id="module-output" name="Projeto-SD" />
+      <element id="library" level="project" name="lib1" />
+      <element id="javaee-facet-resources" facet="Projeto-SD/web/Web" />
+      <element id="artifact" artifact-name="rmiserver" />
+      <element id="artifact" artifact-name="server" />
+      <element id="artifact" artifact-name="terminal" />
+      <element id="artifact" artifact-name="web" />
     </root>
   </artifact>
 </component>

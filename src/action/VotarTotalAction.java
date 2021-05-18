@@ -14,10 +14,10 @@ public class VotarTotalAction extends Action implements SessionAware {
         private String lista = "";
     @Override
     public String execute() throws RemoteException {
-        if (this.lista != "") {
+        if (!lista.equals("")) {
             Date date = new Date(System.currentTimeMillis());
             ListaCandidata listaTotal = this.getEVotingBean().getLista((Eleicao)this.session.get("eleicao"),this.lista);
-            Voto v = new Voto((User)this.session.get("utilizador"),listaTotal,"online",date);
+            Voto v = new Voto((User)this.session.get("utilizador"),listaTotal,"Online",date);
             this.getEVotingBean().addVoto((Eleicao)this.session.get("eleicao"),v);
             System.out.println("votou em "+listaTotal.getNome()+" eleicao: "+((Eleicao)this.session.get("eleicao")).getTitulo());
             return SUCCESS;

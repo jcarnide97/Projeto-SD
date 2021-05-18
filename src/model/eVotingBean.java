@@ -11,10 +11,7 @@ import java.util.Date;
 import meta1.ClientLibrary;
 import meta1.MulticastLibrary;
 import meta1.MulticastServer;
-import meta1.classes.Departamento;
-import meta1.classes.Eleicao;
-import meta1.classes.ListaCandidata;
-import meta1.classes.User;
+import meta1.classes.*;
 
 public class eVotingBean extends UnicastRemoteObject {
     private static final long serialVersionUID = 1L;
@@ -165,6 +162,9 @@ public class eVotingBean extends UnicastRemoteObject {
         return this.rmi.getListaEleicoes();
     }
 
+    public void addVoto(Eleicao elei,Voto voto) throws RemoteException {
+        this.rmi.addVotos(elei,voto);
+    }
     public Eleicao getEleicao(String nomeEleicao) throws RemoteException{
         ArrayList<Eleicao> eleicoes= this.rmi.getListaEleicoes();
         for(Eleicao eleicao: eleicoes){
@@ -174,7 +174,16 @@ public class eVotingBean extends UnicastRemoteObject {
         }
         return null;
     }
+    public ListaCandidata getLista(Eleicao eleicao,String lista) throws RemoteException{
+       Eleicao elei = this.getEleicao(eleicao.getTitulo());
+       for(ListaCandidata listas:elei.getListaCandidatas()){
+           if(listas.getNome().equals(lista)){
+               return listas;
+           }
 
+       }
+       return null;
+    }
     public ArrayList<MulticastServer> getMesasVoto() throws RemoteException {
         return this.rmi.getMesasVoto();
     }

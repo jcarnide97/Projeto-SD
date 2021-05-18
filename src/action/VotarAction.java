@@ -13,11 +13,11 @@ public class VotarAction extends Action implements SessionAware {
     @Override
     public String execute() throws RemoteException {
         if (this.eleicao != "") {
-            System.out.println(this.eleicao);
             Eleicao elei = this.getEVotingBean().getEleicao(this.eleicao);
             if(elei!=null){
                 ArrayList<ListaCandidata> listas = elei.getListaCandidatas();
                 this.session.put("listas",listas);
+                this.session.put("eleicao",elei);
                 return SUCCESS;
             }
             return ERROR;

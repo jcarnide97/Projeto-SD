@@ -5,6 +5,7 @@ import meta1.classes.Voto;
 import org.apache.struts2.interceptor.SessionAware;
 
 import java.rmi.RemoteException;
+import java.util.Locale;
 
 public class LocalVotoAction extends Action implements SessionAware {
     private String numero = null;
@@ -19,7 +20,12 @@ public class LocalVotoAction extends Action implements SessionAware {
                     for (Voto voto : eleicao.getListaVotos()) {
                         if (voto.getEleitor().getNumero().equals(numero)) {
                             listaLocais += "Nome: " + voto.getEleitor().getNome() + "\n";
-                            listaLocais += "Local Voto: " + voto.getLocalVoto().getNome() + "\n";
+                            if(voto.getLocalVoto()!=null){
+                                listaLocais += "Local Voto: " + voto.getLocalVoto().getNome() + "\n";
+                            }
+                            else{
+                                listaLocais += "Local Voto: " + voto.getVotoOnline() + "\n";
+                            }
                             listaLocais += "Hora Voto: " + voto.getHoraVoto() + "\n";
                         }
                     }

@@ -2,8 +2,13 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="meta1.classes.Eleicao" %>
 <%@ page import="meta1.classes.ListaCandidata" %>
+<%@ page import="java.util.Date" %>
+<%@ page import="java.time.Duration" %>
+<%@ page import="java.util.Calendar" %>
+<%@ page import="java.util.GregorianCalendar" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="date" uri="/struts-tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -23,6 +28,9 @@
         if((ArrayList<ListaCandidata>)session.getAttribute("listas")!=null){
             elei = true;
             ArrayList<ListaCandidata> listas = (ArrayList<ListaCandidata>)session.getAttribute("listas");
+            Date dataFinal = ((Eleicao)session.getAttribute("eleicao")).getDataFim();
+            Date dataAtual = new Date(System.currentTimeMillis());
+            Duration time = Duration.between(dataFinal.toInstant(),dataAtual.toInstant());
         }
     %>
     <h2>Hello User: <%=nome%></h2>

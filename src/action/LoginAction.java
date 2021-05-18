@@ -2,6 +2,7 @@ package action;
 
 import meta1.classes.Eleicao;
 import meta1.classes.User;
+import meta1.classes.Voto;
 import org.apache.struts2.interceptor.SessionAware;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -35,16 +36,16 @@ public class LoginAction extends Action implements SessionAware {
                         try {
                             for (Eleicao eleicao : this.getEVotingBean().getListaEleicoes()) {
                                 int flag = 0;
-                                if(eleicao.getListaVotantes()!=null) {
-                                    ArrayList<User> votantes = eleicao.getListaVotantes();
-                                    for (User utiliza : votantes) {
-                                        if (utiliza.getNumero().equals(this.utilizador.getNumero())) {
+                                if(eleicao.getListaVotos()!=null) {
+                                    ArrayList<Voto> votantes = eleicao.getListaVotos();
+                                    for (Voto voto : votantes) {
+                                        if (voto.getEleitor().getNumero().equals(this.utilizador.getNumero())) {
                                             flag = 1;
                                             break;
                                         }
                                     }
                                 }
-                                if(flag==0){
+                                if(flag==0 && eleicao.votacaoAberta()){
                                     if(eleicao.getTipo().equals("estudante") && this.utilizador.isEstudante()){
                                         elei.add(eleicao);
                                     }

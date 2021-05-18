@@ -2,10 +2,10 @@
   <artifact type="war" name="web">
     <output-path>$PROJECT_DIR$/out/artifacts/web</output-path>
     <root id="archive" name="evoting.war">
-      <element id="javaee-facet-resources" facet="Projeto-SD/web/Web" />
+      <element id="javaee-facet-resources" facet="ProjetoSD/web/Web" />
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
-          <element id="module-output" name="Projeto-SD" />
+          <element id="module-output" name="ProjetoSD" />
         </element>
         <element id="directory" name="lib">
           <element id="library" level="project" name="lib1" />

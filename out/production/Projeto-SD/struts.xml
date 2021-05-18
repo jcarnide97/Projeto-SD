@@ -12,6 +12,7 @@ and should reside on the classpath of the webapp (generally /WEB-INF/classes). -
   <!-- devMode equals debug information and reload everything for every request -->
   <constant name="struts.devMode" value="true" />
   <constant name="struts.ui.theme" value="simple" />
+  <constant name="struts.action.excludePattern" value="/ws"/>
 
   <package name="eVoting" extends="struts-default">
 
@@ -153,6 +154,11 @@ and should reside on the classpath of the webapp (generally /WEB-INF/classes). -
       <action name="button9">
           <result>/estadoMesasVoto.jsp</result>
           <result name="login" type="redirect">/index.jsp</result>
+      </action>
+
+      <action name="button10">
+          <result type="redirect">/chat.jsp</result>
+          <!--<result name="login" type="redirect">/index.jsp</result>-->
       </action>
       <!-- action do estado da mesa de voto com WebSockets -->
 

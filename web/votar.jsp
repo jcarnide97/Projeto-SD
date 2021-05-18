@@ -21,18 +21,56 @@
     <img src="resources/logo.png" alt="Avatar" class="avatar">
 </div>
 <div class="container">
-    <%
-        String nome=((User)session.getAttribute("utilizador")).getNome();
-        ArrayList<Eleicao> eleicoes = ((ArrayList<Eleicao>)session.getAttribute("eleicoes"));
-        Boolean elei = false;
-        if((ArrayList<ListaCandidata>)session.getAttribute("listas")!=null){
-            elei = true;
-            ArrayList<ListaCandidata> listas = (ArrayList<ListaCandidata>)session.getAttribute("listas");
-            Date dataFinal = ((Eleicao)session.getAttribute("eleicao")).getDataFim();
-            Date dataAtual = new Date(System.currentTimeMillis());
-            Duration time = Duration.between(dataFinal.toInstant(),dataAtual.toInstant());
+    <script type="text/javascript">
+        var websocket = null;
+        connect('ws://'+window.location.host+'/web/ws');
+        window.onload = function() {
+            <%
+                String nome=((User)session.getAttribute("utilizador")).getNome();
+                ArrayList<Eleicao> eleicoes = ((ArrayList<Eleicao>)session.getAttribute("eleicoes"));
+                Boolean elei = false;
+                String nomeEleicao = "";
+                if((ArrayList<ListaCandidata>)session.getAttribute("listas")!=null){
+                    elei = true;
+                    ArrayList<ListaCandidata> listas = (ArrayList<ListaCandidata>)session.getAttribute("listas");
+                    nomeEleicao = ((Eleicao)session.getAttribute("eleicao")).getTitulo();
+                }
+            %>
         }
-    %>
+        var nomeEleicao="";
+        var nome="";
+        var texto="";
+        console.log("<%=elei%>" +  " conaaaaaaaa");
+
+        if("<%=elei%>".toString()=="false"){
+            websocket.onopen=()=>doSend("<%=nome%>"+" deu login");
+        }
+        else if("<%=nomeEleicao%>"!=""){
+            var nomeEleicao = "<%=nomeEleicao%>";
+            var nome = "<%=nome%>";
+            var texto = nome + " votou na eleição "+nomeEleicao;
+        }
+
+
+
+        function connect(host) { // connect to the host websocket
+            if ('WebSocket' in window)
+                websocket = new WebSocket(host);
+            else if ('MozWebSocket' in window)
+                websocket = new MozWebSocket(host);
+            else {
+                writeToHistory('Get a real browser which supports WebSocket.');
+                return;
+            }
+        }
+
+        function doSend(mensagem) {
+            var message = mensagem;
+            if (message != '')
+                websocket.send(message); // send the message to the server
+        }
+
+    </script>
     <h2>Hello User: <%=nome%></h2>
 
     <form action="votar" method="post">
@@ -61,7 +99,7 @@
                 <br>
             </h2>
         </c:forEach>
-        <button type="submit" value="votarTotal" >Votar</button>
+        <button type="submit" value="votarTotal" onclick="doSend(texto)">Votar</button>
         <br>
     </form>
 

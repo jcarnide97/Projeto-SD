@@ -15,6 +15,14 @@ and should reside on the classpath of the webapp (generally /WEB-INF/classes). -
 
   <package name="eVoting" extends="struts-default">
 
+      <interceptors>
+          <interceptor name="loginInterceptor" class="interceptor.LoginInterceptor" />
+          <interceptor-stack name="loginStack">
+              <interceptor-ref name="loginInterceptor"/>
+              <interceptor-ref name="defaultStack"/>
+          </interceptor-stack>
+      </interceptors>
+
       <default-action-ref name="index" />
 
       <global-results>
@@ -44,113 +52,136 @@ and should reside on the classpath of the webapp (generally /WEB-INF/classes). -
       </action>
 
       <action name="button1">
+          <interceptor-ref name="loginStack"/>
           <result>/criarDepartamento.jsp</result>
           <result name="login" type="redirect">/index.jsp</result>
       </action>
 
       <action name="criarDepartamento" class="action.CriarDepartamentoAction" method="execute">
+          <interceptor-ref name="loginStack"/>
           <result name="success">/adminMenu.jsp</result>
           <result name="error">/criarDepartamento.jsp</result>
           <result name="login" type="redirect">/index.jsp</result>
       </action>
 
       <action name="button2">
+          <interceptor-ref name="loginStack"/>
           <result>/criarUser.jsp</result>
           <result name="login" type="redirect">/index.jsp</result>
       </action>
 
       <action name="criarUser" class="action.CriarUserAction" method="execute">
+          <interceptor-ref name="loginStack"/>
           <result name="success">/adminMenu.jsp</result>
           <result name="error">/criarUser.jsp</result>
           <result name="login">/index.jsp</result>
       </action>
 
       <action name="button3">
+          <interceptor-ref name="loginStack"/>
           <result>/criarEleicao.jsp</result>
           <result name="login" type="redirect">/index.jsp</result>
       </action>
 
       <action name="criarEleicao" class="action.CriarEleicaoAction" method="execute">
+          <interceptor-ref name="loginStack"/>
           <result name="success">/adminMenu.jsp</result>
           <result name="error">/criarEleicao.jsp</result>
           <result name="login">/index.jsp</result>
       </action>
 
       <action name="button4">
+          <interceptor-ref name="loginStack"/>
           <result>/criarListaCandidata.jsp</result>
           <result name="login" type="redirect">/index.jsp</result>
       </action>
 
       <action name="criarListaCandidata" class="action.CriarListaCandidataAction" method="execute">
+          <interceptor-ref name="loginStack"/>
           <result name="success">/adminMenu.jsp</result>
           <result name="error">/criarListaCandidata.jsp</result>
           <result name="login">/index.jsp</result>
       </action>
 
       <action name="button12">
+          <interceptor-ref name="loginStack"/>
           <result>/listarEleicao.jsp</result>
           <result name="login" type="redirect">/index.jsp</result>
       </action>
 
       <action name="listarEleicao" class="action.ListarEleicaoAction" method="execute">
+          <interceptor-ref name="loginStack"/>
           <result name="success">/listarEleicao.jsp</result>
           <result name="error">/listarEleicao.jsp</result>
           <result name="login">/index.jsp</result>
       </action>
 
       <action name="button5">
+          <interceptor-ref name="loginStack"/>
           <result>/gerirMesasVoto.jsp</result>
           <result name="login" type="redirect">/index.jsp</result>
       </action>
 
       <action name="gerirMesasVoto" class="action.GerirMesasVotoAction" method="execute">
+          <interceptor-ref name="loginStack"/>
           <result name="success">/adminMenu.jsp</result>
           <result name="error">/gerirMesasVoto.jsp</result>
           <result name="login">/index.jsp</result>
       </action>
 
       <action name="button6">
+          <interceptor-ref name="loginStack"/>
           <result>/associarMesaVoto.jsp</result>
           <result name="login" type="redirect">/index.jsp</result>
       </action>
 
       <action name="associarMesaVoto" class="action.AssociarMesaVotoAction" method="execute">
+          <interceptor-ref name="loginStack"/>
           <result name="success">/adminMenu.jsp</result>
           <result name="error">/associarMesaVoto.jsp</result>
           <result name="login">/index.jsp</result>
       </action>
 
       <action name="button7">
+          <interceptor-ref name="loginStack"/>
           <result>/alterarEleicao.jsp</result>
           <result name="login" type="redirect">/index.jsp</result>
       </action>
 
       <action name="alterarEleicao" class="action.AlterarEleicaoAction" method="execute">
+          <interceptor-ref name="loginStack"/>
           <result name="success">/adminMenu.jsp</result>
           <result name="error">/alterarEleicao.jsp</result>
           <result name="login">/index.jsp</result>
       </action>
 
       <action name="button8">
+          <interceptor-ref name="loginStack"/>
           <result>/localVoto.jsp</result>
           <result name="login" type="redirect">/index.jsp</result>
       </action>
 
       <action name="localVoto" class="action.LocalVotoAction" method="execute">
+          <interceptor-ref name="loginStack"/>
           <result name="success">/localVoto.jsp</result>
           <result name="error">/localVoto.jsp</result>
           <result name="login">/index.jsp</result>
       </action>
 
       <action name="votar" class="action.VotarAction" method="execute">
+          <interceptor-ref name="loginStack"/>
           <result name="success">/votar.jsp</result>
+          <result name="error">/index.jsp</result>
       </action>
 
       <action name="votarTotal" class="action.VotarTotalAction" method="execute">
+          <interceptor-ref name="loginStack"/>
           <result name="success">/index.jsp</result>
+          <result name="error">/votar.jsp</result>
       </action>
 
       <action name="button9">
+          <interceptor-ref name="loginStack"/>
           <result>/estadoMesasVoto.jsp</result>
           <result name="login" type="redirect">/index.jsp</result>
       </action>
@@ -159,11 +190,13 @@ and should reside on the classpath of the webapp (generally /WEB-INF/classes). -
       <!-- Actions do botão 10 e da sua pagina precisão de WebSockets -->
 
       <action name="button11">
+          <interceptor-ref name="loginStack"/>
           <result>/eleicoesPassadas.jsp</result>
           <result name="login" type="redirect">/index.jsp</result>
       </action>
 
       <action name="eleicoesPassadas" class="action.EleicoesPassadasAction" method="execute">
+          <interceptor-ref name="loginStack"/>
           <result name="success">/eleicoesPassadas.jsp</result>
           <result name="error">/eleicoesPassadas.jsp</result>
           <result name="login" type="redirect">/index.jsp</result>

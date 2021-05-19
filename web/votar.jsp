@@ -30,25 +30,30 @@
                 ArrayList<Eleicao> eleicoes = ((ArrayList<Eleicao>)session.getAttribute("eleicoes"));
                 Boolean elei = false;
                 String nomeEleicao = "";
+                int votos = 0;
                 if((ArrayList<ListaCandidata>)session.getAttribute("listas")!=null){
                     elei = true;
                     ArrayList<ListaCandidata> listas = (ArrayList<ListaCandidata>)session.getAttribute("listas");
                     nomeEleicao = ((Eleicao)session.getAttribute("eleicao")).getTitulo();
+                    votos = ((Eleicao)session.getAttribute("eleicao")).getNumVotosAtual() + 1;
                 }
             %>
         }
         var nomeEleicao="";
-        var nome="";
+        var nome;
         var texto="";
-        console.log("<%=elei%>" +  " conaaaaaaaa");
-
+        nome = "<%=nome%>";
+        var textoSair = nome+" deu logout";
+        var textoVotos = "";
         if("<%=elei%>".toString()=="false"){
             websocket.onopen=()=>doSend("<%=nome%>"+" deu login");
         }
         else if("<%=nomeEleicao%>"!=""){
-            var nomeEleicao = "<%=nomeEleicao%>";
-            var nome = "<%=nome%>";
-            var texto = nome + " votou na eleição "+nomeEleicao;
+            nomeEleicao = "<%=nomeEleicao%>";
+            texto = nome + " votou na eleição "+nomeEleicao;
+            textoVotos = "Votos atuais da eleição "+nomeEleicao+":"+"<%=votos%>".toString()+"\n";
+            texto = texto+"\n"+textoVotos;
+            texto = texto+"\n"+textoSair;
         }
 
 
@@ -106,7 +111,7 @@
     <% }
     %>
     <form action="logout">
-        <button type="submit" >LogOut</button>
+        <button type="submit" onclick="doSend(textoSair)">LogOut</button>
     </form>
 </div>
 </body>

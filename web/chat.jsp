@@ -22,7 +22,7 @@
 
             connect('ws://'+window.location.host+'/web/ws');
 
-            document.getElementById("chat").focus();
+            //document.getElementById("chat").focus();
         }
 
         function connect(host) { // connect to the host websocket
@@ -35,23 +35,23 @@
                 return;
             }
 
-            websocket.onopen    = onOpen; // set the 4 event listeners below
+            //websocket.onopen    = onOpen; // set the 4 event listeners below
             websocket.onclose   = onClose;
             websocket.onmessage = onMessage;
             websocket.onerror   = onError;
         }
 
-        function onOpen(event) {
+        /*function onOpen(event) {
             writeToHistory('Connected to ' + window.location.host + '.');
-            document.getElementById('chat').onkeydown = function(key) {
+            //document.getElementById('chat').onkeydown = function(key) {
                 if (key.keyCode == 13)
                     doSend(); // call doSend() on enter key press
             };
-        }
+        }*/
         
         function onClose(event) {
             writeToHistory('WebSocket closed (code ' + event.code + ').');
-            document.getElementById('chat').onkeydown = null;
+            //document.getElementById('chat').onkeydown = null;
         }
         
         function onMessage(message) { // print the received message
@@ -60,14 +60,14 @@
         
         function onError(event) {
             writeToHistory('WebSocket error.');
-            document.getElementById('chat').onkeydown = null;
+            //document.getElementById('chat').onkeydown = null;
         }
         
         function doSend() {
             var message = document.getElementById('chat').value;
             if (message != '')
                 websocket.send(message); // send the message to the server
-            document.getElementById('chat').value = '';
+            //document.getElementById('chat').value = '';
         }
 
         function writeToHistory(text) {
@@ -85,7 +85,11 @@
 <noscript>JavaScript must be enabled for WebSockets to work.</noscript>
 <div>
     <div id="container"><div id="history"></div></div>
-    <p><input type="text" placeholder="type to chat" id="chat"></p>
+    <br>
+    <form action="cancelar">
+        <button type="submit" >Cancelar</button>
+    </form>
+    <!--<p><input type="text" placeholder="type to chat" id="chat"></p>-->
 </div>
 </body>
 </html>

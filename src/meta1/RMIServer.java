@@ -35,7 +35,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
         this.usersAuth = new HashMap<String, String>();
         this.usersAuth2 = new HashMap<String, String>();
         this.loggedUsers = new ArrayList<>();
-        //guardaDatabase();
+        //fguardaDatabase();
         startDatabase();
         System.out.println("Leitura dos ficheiros de utilizadores...");
         for (User user : listaUsers) {

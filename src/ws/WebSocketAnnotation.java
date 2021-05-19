@@ -36,8 +36,8 @@ public class WebSocketAnnotation {
     @OnClose
     public void end() {
     	// clean up once the WebSocket connection is closed
-        String message = "*" + username + "* left the chat.";
-        sendMessage(message);
+        /*String message = "*" + username + "* left the chat.";
+        sendMessage(message);*/
         users.remove(this);
     }
 
@@ -46,7 +46,7 @@ public class WebSocketAnnotation {
 		// one should never trust the client, and sensitive HTML
         // characters should be replaced with &lt; &gt; &quot; &amp;
     	String upperCaseMessage = message;
-        System.out.println(message);
+        //System.out.println(message);
     	sendMessage(upperCaseMessage);
     }
     

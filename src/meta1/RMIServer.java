@@ -42,6 +42,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
             System.out.println(user.getNome());
             System.out.println(user.getNumero());
             System.out.println(user.getPassword());
+            System.out.println(user.getFaceId());
             // Autenticação de users através do nome e password
             this.usersAuth.put(user.getNome(), user.getPassword());
             this.usersAuth2.put(user.getNome(), user.getNumero());
@@ -197,11 +198,12 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
     }
     synchronized public void setFacebook(String id, User user) throws RemoteException {
         for(User utliza:listaUsers){
-            if(utliza.getNumero().equals(user.getNumero())){
+            if(utliza.getNumero().equals(user.getNumero())&& utliza.getNome().equals(user.getNome())){
                 utliza.setFaceId(id);
                 break;
             }
         }
+        guardaDatabase();
     }
     synchronized public void setLigados(MulticastServer mesaVoto,int indice, boolean newstate) throws RemoteException {
         for(MulticastServer mesa:mesasVoto){

@@ -88,12 +88,14 @@ public class eVotingBean extends UnicastRemoteObject {
         System.out.println();
         // Trade the Request Token and Verfier for the Access Token
         Token accessToken = service.getAccessToken(EMPTY_TOKEN, verifier);
+
         // Now let's go and ask for a protected resource!
         OAuthRequest request = new OAuthRequest(Verb.GET, PROTECTED_RESOURCE_URL, service);
         service.signRequest(accessToken, request);
         Response response = request.send();
         String coisas= response.getBody();
         String[] parts = coisas.split("\"");
+
         ArrayList<User> todos = this.rmi.getListaUsers();
         User utiliza = null;
         for(User user:todos){

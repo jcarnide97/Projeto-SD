@@ -19,7 +19,6 @@ public class FacebookAction extends Action implements SessionAware {
 
     @Override
     public String execute() throws MalformedURLException, RemoteException {
-        System.out.println("weiiiiiiiii ");
         this.setAuthorizationUrl(this.getEVotingBean().devolveOauth());
         System.out.println(this.authorizationUrl);
         return SUCCESS;

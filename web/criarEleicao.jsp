@@ -12,7 +12,7 @@
     </div>
     <div class="container">
         <form action="criarEleicao" method="post">
-            <h2>Criar Departamento</h2>
+            <h2>Criar Eleição</h2>
             <label>Título:</label>
             <s:textfield name="titulo"/>
             <br>

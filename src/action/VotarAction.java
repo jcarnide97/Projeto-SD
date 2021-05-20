@@ -8,6 +8,9 @@ import org.apache.struts2.interceptor.SessionAware;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
+/**
+ * Action para um utilizador poder votar numa determinada lista de uma determinada eleição
+ */
 public class VotarAction extends Action implements SessionAware {
         private String eleicao = "";
     @Override

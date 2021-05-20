@@ -7,6 +7,9 @@ import org.apache.struts2.interceptor.SessionAware;
 import java.rmi.RemoteException;
 import java.util.Locale;
 
+/**
+ * Action para saber o local de voto de um eleitor, baseado no número do utilizador
+ */
 public class LocalVotoAction extends Action implements SessionAware {
     private String numero = null;
     private String listaLocais = "";

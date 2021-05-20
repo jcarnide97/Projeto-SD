@@ -8,6 +8,9 @@ import org.apache.struts2.interceptor.SessionAware;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
+/**
+ * Action que vai mostrar as informações de eleições que já terminaram
+ */
 public class EleicoesPassadasAction extends Action implements SessionAware {
     private String titulo = null;
     public String resultados = "";

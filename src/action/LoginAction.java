@@ -7,6 +7,9 @@ import org.apache.struts2.interceptor.SessionAware;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
+/**
+ * Action para fazer o login com nome e password ou através do Facebook
+ */
 public class LoginAction extends Action implements SessionAware {
     private static final long serialVersionUID = 4L;
     private String nome = null;
@@ -86,16 +89,20 @@ public class LoginAction extends Action implements SessionAware {
     public void setNome(String nome) {
         this.nome = nome;
     }
+
     public User getUtilizador(){
         return this.utilizador;
     }
+
     public ArrayList<Eleicao> getEleicoes(){
         return this.eleicoes;
     }
+
     public void setEleicoes(ArrayList<Eleicao> eleicoes) {
         this.eleicoes = eleicoes;
 
     }
+
     public void setUtilizador(User utilizador){
         this.utilizador = utilizador;
     }

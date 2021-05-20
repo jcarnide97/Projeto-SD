@@ -2,6 +2,9 @@ package action;
 
 import org.apache.struts2.interceptor.SessionAware;
 
+/**
+ * Action para criar ou remover uma mesa de voto (com base nos departamentos existentes)
+ */
 public class GerirMesasVotoAction extends Action implements SessionAware {
     private String criaMesa = null;
     private String removeMesa = null;

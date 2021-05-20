@@ -14,7 +14,11 @@ public class Action extends ActionSupport implements SessionAware {
     private static final long serialVersionUID = 4L;
     Map<String, Object> session;
 
-
+    /**
+     * Getter que fará abrirá a session e criá-la caso ela não exista
+     * @return session do tipo eVotingBean
+     * @throws RemoteException
+     */
     public eVotingBean getEVotingBean() throws RemoteException {
         if (!session.containsKey("eVotingBean")) {
             this.setEVotingBean(new eVotingBean());

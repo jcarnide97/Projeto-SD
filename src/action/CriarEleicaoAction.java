@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * Action que vai criar uma nova eleição
+ */
 public class CriarEleicaoAction extends Action implements SessionAware {
     private String titulo = null;
     private String descricao = null;

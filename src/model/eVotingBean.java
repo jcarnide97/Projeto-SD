@@ -109,6 +109,7 @@ public class eVotingBean extends UnicastRemoteObject {
         }
         return null;
     }
+
     public User getUser(String nome, String password) throws RemoteException{
        ArrayList<User> all = rmi.getListaUsers();
        for(User utilizador : all){

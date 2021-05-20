@@ -4,6 +4,9 @@ import org.apache.struts2.interceptor.SessionAware;
 
 import java.rmi.RemoteException;
 
+/**
+ * Action que vai criar uma nova lista candidata a uma eleição à escolha
+ */
 public class CriarListaCandidataAction extends Action implements SessionAware {
     private String nomeLista = null;
     private String tituloEleicao = null;

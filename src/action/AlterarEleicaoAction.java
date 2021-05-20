@@ -7,6 +7,9 @@ import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Action para alterar as propriedades de uma eleição já existente
+ */
 public class AlterarEleicaoAction extends Action implements SessionAware {
     private String titulo = null;
     private String novoTitulo = null;
@@ -14,6 +17,11 @@ public class AlterarEleicaoAction extends Action implements SessionAware {
     private String novoInicio = null;
     private String novoFim = null;
 
+    /**
+     * execute da action que irá alterar as propriedades de uma eleição
+     * @return SUCCESS caso não exista problemas nos atributos dos dados da eleição, ERROR caso contrário
+     * @throws Exception
+     */
     @Override
     public String execute() throws Exception {
         Eleicao editEleicao;

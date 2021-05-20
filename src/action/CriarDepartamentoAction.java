@@ -2,6 +2,9 @@ package action;
 
 import org.apache.struts2.interceptor.SessionAware;
 
+/**
+ * Action para criar um novo departamento
+ */
 public class CriarDepartamentoAction extends Action implements SessionAware {
     private String nomeDep = null;
 

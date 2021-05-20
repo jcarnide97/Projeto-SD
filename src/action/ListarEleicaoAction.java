@@ -7,6 +7,9 @@ import org.apache.struts2.interceptor.SessionAware;
 
 import java.rmi.RemoteException;
 
+/**
+ * Action para mostrar os detalhes de uma eleição como o titulo, descrição ou listas candidatas
+ */
 public class ListarEleicaoAction extends Action implements SessionAware {
     private String titulo = null;
     private String detalhesEleicao = "";

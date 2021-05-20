@@ -5,6 +5,9 @@ import org.apache.struts2.interceptor.SessionAware;
 
 import java.util.Locale;
 
+/**
+ * Action que vai criar um novo utilizador
+ */
 public class CriarUserAction extends Action implements SessionAware {
     private static final long serialVersionUID = 4L;
     private String nome = null;

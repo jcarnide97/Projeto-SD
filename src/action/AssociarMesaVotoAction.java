@@ -6,6 +6,9 @@ import org.apache.struts2.interceptor.SessionAware;
 
 import java.util.ArrayList;
 
+/**
+ * Action que vai associar uma mesa de voto a uma eleição
+ */
 public class AssociarMesaVotoAction extends Action implements SessionAware {
     private String tituloEleicao = null;
     private String nomeDep = null;

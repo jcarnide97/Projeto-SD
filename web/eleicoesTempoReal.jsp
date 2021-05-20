@@ -13,7 +13,7 @@
 <html>
 <head>
     <title>Estado da Eleição</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="css/tempoReal.css">
     <script type="text/javascript">
 
         var websocket = null;
@@ -83,7 +83,12 @@
 </head>
 <body>
 <noscript>JavaScript must be enabled for WebSockets to work.</noscript>
+<div class="imgcontainer">
+    <img src="resources/logo.png" alt="Avatar" class="avatar">
+</div>
 <div>
+    <h2>Dados das Eleições em Tempo Real</h2>
+    <br>
     <div id="container"><div id="history"></div></div>
     <br>
     <form action="cancelar">

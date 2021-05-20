@@ -6,6 +6,7 @@
 <%@ page import="java.time.Duration" %>
 <%@ page import="java.util.Calendar" %>
 <%@ page import="java.util.GregorianCalendar" %>
+<%@ page import="java.net.URL" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="date" uri="/struts-tags" %>
@@ -52,11 +53,13 @@
             nomeEleicao = "<%=nomeEleicao%>";
             texto = nome + " votou na eleição "+nomeEleicao;
             textoVotos = "Votos atuais da eleição "+nomeEleicao+":"+"<%=votos%>".toString()+"\n";
-            texto = texto+"\n"+textoVotos;
-            texto = texto+"\n"+textoSair;
         }
 
-
+        function sendTodo(){
+            doSend(texto);
+            doSend(textoVotos);
+            doSend(textoSair);
+        }
 
         function connect(host) { // connect to the host websocket
             if ('WebSocket' in window)
@@ -104,15 +107,21 @@
                 <br>
             </h2>
         </c:forEach>
-        <button type="submit" value="votarTotal" onclick="doSend(texto)">Votar</button>
+        <button type="submit" value="votarTotal" onclick="sendTodo()">Votar</button>
         <br>
     </form>
 
     <% }
     %>
+    <form action="facebook">
+        <button type="submit" >Associar Facebook</button>
+    </form>
+
     <form action="logout">
         <button type="submit" onclick="doSend(textoSair)">LogOut</button>
     </form>
+
+
 </div>
 </body>
 </html>

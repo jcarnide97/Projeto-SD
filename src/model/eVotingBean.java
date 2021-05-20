@@ -7,17 +7,29 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Scanner;
 
-import meta1.ClientLibrary;
 import meta1.MulticastLibrary;
 import meta1.MulticastServer;
 import meta1.classes.*;
+
+import com.github.scribejava.core.builder.ServiceBuilder;
+import com.github.scribejava.core.oauth.OAuthService;
+
+import uc.sd.apis.FacebookApi2;
+
+import com.github.scribejava.core.model.OAuthRequest;
+import com.github.scribejava.core.model.Response;
+import com.github.scribejava.core.model.Token;
+import com.github.scribejava.core.model.Verb;
+import com.github.scribejava.core.model.Verifier;
 
 public class eVotingBean extends UnicastRemoteObject {
     private static final long serialVersionUID = 1L;
     private MulticastLibrary rmi;
     private String nome;
     private String password;
+    private OAuthService service;
 
     public eVotingBean() throws RemoteException {
         this.ligarRMI();
@@ -35,6 +47,66 @@ public class eVotingBean extends UnicastRemoteObject {
         }
     }
 
+    public String devolveOauth(){
+        Token EMPTY_TOKEN = null;
+        // Replace these with your own api key and secret
+        String apiKey = "482895983046573";
+        String apiSecret = "3cab1739bc688c729a8dd301bd666f4f";
+
+        service = new ServiceBuilder()
+                .provider(FacebookApi2.class)
+                .apiKey(apiKey)
+                .apiSecret(apiSecret)
+                .callback("https://eden.dei.uc.pt/~fmduarte/echo.php") // Do not change this.
+                .scope("public_profile")
+                .build();
+
+        String authorizationUrl = service.getAuthorizationUrl(EMPTY_TOKEN);
+        return authorizationUrl;
+    }
+
+    public void ligaFace(String code,User user) throws RemoteException {
+        String PROTECTED_RESOURCE_URL = "https://graph.facebook.com/me";
+        Token EMPTY_TOKEN = null;
+        Verifier verifier = new Verifier(code);
+        System.out.println();
+        // Trade the Request Token and Verfier for the Access Token
+        Token accessToken = service.getAccessToken(EMPTY_TOKEN, verifier);
+        // Now let's go and ask for a protected resource!
+        OAuthRequest request = new OAuthRequest(Verb.GET, PROTECTED_RESOURCE_URL, service);
+        service.signRequest(accessToken, request);
+        Response response = request.send();
+        String coisas= response.getBody();
+        String[] parts = coisas.split("\"");
+        this.rmi.setFacebook(parts[7],user);
+    }
+
+    public User loginFace(String code)throws RemoteException{
+        String PROTECTED_RESOURCE_URL = "https://graph.facebook.com/me";
+        Token EMPTY_TOKEN = null;
+        Verifier verifier = new Verifier(code);
+        System.out.println();
+        // Trade the Request Token and Verfier for the Access Token
+        Token accessToken = service.getAccessToken(EMPTY_TOKEN, verifier);
+        // Now let's go and ask for a protected resource!
+        OAuthRequest request = new OAuthRequest(Verb.GET, PROTECTED_RESOURCE_URL, service);
+        service.signRequest(accessToken, request);
+        Response response = request.send();
+        String coisas= response.getBody();
+        String[] parts = coisas.split("\"");
+        ArrayList<User> todos = this.rmi.getListaUsers();
+        User utiliza = null;
+        for(User user:todos){
+            if(user.getFaceId().equals(parts[7])){
+                utiliza = user;
+                break;
+            }
+        }
+        if(utiliza!=null){
+            return utiliza;
+        }
+        return null;
+    }
     public User getUser(String nome, String password) throws RemoteException{
        ArrayList<User> all = rmi.getListaUsers();
        for(User utilizador : all){

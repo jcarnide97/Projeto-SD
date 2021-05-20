@@ -12,6 +12,7 @@ public abstract class User implements Serializable {
     public String password;
     public Departamento departamento;
     public String validadeCC;
+    public String faceId;
 
     public User(String nome, String numero, String telefone, String morada, String password, Departamento departamento, String validadeCC) {
         this.nome = nome;
@@ -21,6 +22,14 @@ public abstract class User implements Serializable {
         this.password = password;
         this.departamento = departamento;
         this.validadeCC = validadeCC;
+    }
+
+    public void setFaceId(String faceId){
+        this.faceId = faceId;
+    }
+
+    public String getFaceId(){
+        return this.faceId;
     }
 
     public String getNome() {

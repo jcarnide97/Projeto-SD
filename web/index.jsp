@@ -1,5 +1,6 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@page import="action.FacebookAction"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -20,6 +21,12 @@
             <label><b>Password</b></label>
             <s:textfield name="password" type="password"/> <br>
             <button type="submit" value="login">Login</button>
+        </div>
+    </form>
+    <form action="loginFacebook" method="post">
+        <br>
+        <div class="container">
+            <button type="submit">Login com Facebook</button>
         </div>
     </form>
 </body>

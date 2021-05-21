@@ -79,7 +79,7 @@
         }
 
     </script>
-    <h2>Hello User: <%=nome%></h2>
+    <h2>Bem Vindo <%=nome%></h2>
 
     <form action="votar" method="post">
         <h2>Eleições Disponíveis: </h2>

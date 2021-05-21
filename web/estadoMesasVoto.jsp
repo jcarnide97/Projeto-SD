@@ -5,6 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
     <title>Estado das Mesas de Voto</title>
     <link rel="icon" type="image/png" href="resources/icon.png">
+    <link rel="stylesheet" type="text/css" href="css/tempoReal.css">
 </head>
 <body>
 <div class="imgcontainer">
@@ -13,7 +14,9 @@
 <div class="container">
     <h2>Estado das Mesas de Voto</h2>
     <br>
-    <s:textarea />
+    <div id="container">
+        <div id="history"></div>
+    </div>
     <form action="cancelar">
         <button type="submit">Cancelar</button>
     </form>

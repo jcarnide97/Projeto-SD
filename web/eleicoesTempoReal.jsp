@@ -92,13 +92,14 @@
 </div>
 <div>
     <h2>Dados das Eleições em Tempo Real</h2>
-    <br><br>
-    <div id="container"><div id="history"></div></div>
+    <br>
+    <div id="container">
+        <div id="history"></div>
+    </div>
     <br>
     <form action="cancelar">
         <button type="submit" >Cancelar</button>
     </form>
-    <!--<p><input type="text" placeholder="type to chat" id="chat"></p>-->
 </div>
 </body>
 </html>

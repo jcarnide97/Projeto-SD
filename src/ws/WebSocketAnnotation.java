@@ -35,8 +35,6 @@ public class WebSocketAnnotation {
     public void start(Session session) {
         this.session = session;
         users.add(this);
-        /*String message = "*" + session + "* connected.";
-        sendMessage(message);*/
     }
 
     @OnClose
@@ -49,9 +47,7 @@ public class WebSocketAnnotation {
     public void receiveMessage(String message) {
 		// one should never trust the client, and sensitive HTML
         // characters should be replaced with &lt; &gt; &quot; &amp;
-    	String upperCaseMessage = message;
-        //System.out.println(message);
-    	sendMessage(upperCaseMessage);
+        sendMessage(message);
     }
     
     @OnError

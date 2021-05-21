@@ -13,19 +13,19 @@
     <div class="container">
         <form action="criarEleicao" method="post">
             <h2>Criar Eleição</h2>
-            <label>Título:</label>
+            <label><b>Título:</b></label>
             <s:textfield name="titulo"/>
             <br>
-            <label>Descrição:</label>
+            <label><b>Descrição:</b></label>
             <s:textfield name="descricao"/>
             <br>
-            <label>Data de Início (dd/mm/yyyy HH:MM)</label>
+            <label><b>Data de Início (dd/mm/yyyy HH:MM):</b></label>
             <s:textfield name="inicio"/>
             <br>
-            <label>Data de Fim (dd/mm/yyyy HH:MM)</label>
+            <label><b>Data de Fim (dd/mm/yyyy HH:MM):</b></label>
             <s:textfield name="fim"/>
             <br>
-            <label>Tipo de Eleição (estudante/docente/funcionário):</label>
+            <label><b>Tipo de Eleição (estudante/docente/funcionário):</b></label>
             <s:textfield name="tipo"/>
             <br><br>
             <button type="submit">Criar Eleição</button>

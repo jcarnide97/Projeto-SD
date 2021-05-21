@@ -17,6 +17,7 @@
     <div id="container">
         <div id="history"></div>
     </div>
+    <br>
     <form action="cancelar">
         <button type="submit">Cancelar</button>
     </form>

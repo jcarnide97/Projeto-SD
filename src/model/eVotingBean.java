@@ -240,6 +240,7 @@ public class eVotingBean extends UnicastRemoteObject {
     public void addVoto(Eleicao elei,Voto voto) throws RemoteException {
         this.rmi.addVotos(elei,voto);
     }
+
     public Eleicao getEleicao(String nomeEleicao) throws RemoteException{
         ArrayList<Eleicao> eleicoes= this.rmi.getListaEleicoes();
         for(Eleicao eleicao: eleicoes){
@@ -297,4 +298,12 @@ public class eVotingBean extends UnicastRemoteObject {
         }
     }
 
+    public String getOnlineUsers() throws RemoteException{
+        ArrayList<String> onlineUsers = this.rmi.getLoggedUsers();
+        String prevLogged = "";
+        for (String user : onlineUsers) {
+            prevLogged += user + "já loggado";
+        }
+        return prevLogged;
+    }
 }

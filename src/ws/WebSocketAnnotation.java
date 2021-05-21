@@ -25,6 +25,7 @@ public class WebSocketAnnotation {
     private final String username;
     private Session session;
     private static final Set<WebSocketAnnotation> users = new CopyOnWriteArraySet<>();
+    private MulticastLibrary rmiServer;
 
     public WebSocketAnnotation() {
         username = "User" + sequence.getAndIncrement();

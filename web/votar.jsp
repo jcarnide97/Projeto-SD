@@ -46,10 +46,10 @@
         nome = "<%=nome%>";
         var textoSair = nome+" deu logout";
         var textoVotos = "";
-        if("<%=elei%>".toString()=="false"){
+        if("<%=elei%>".toString()==="false"){
             websocket.onopen=()=>doSend("<%=nome%>"+" deu login");
         }
-        else if("<%=nomeEleicao%>"!=""){
+        else if("<%=nomeEleicao%>"!==""){
             nomeEleicao = "<%=nomeEleicao%>";
             texto = nome + " votou na eleição "+nomeEleicao;
             textoVotos = "Votos atuais da eleição "+nomeEleicao+":"+"<%=votos%>".toString()+"\n";
@@ -74,7 +74,7 @@
 
         function doSend(mensagem) {
             var message = mensagem;
-            if (message != '')
+            if (message !== '')
                 websocket.send(message); // send the message to the server
         }
 
@@ -95,7 +95,7 @@
     </form>
     <br>
     <%
-        if (elei == true)
+        if (elei)
         {
     %>
     <form action="votarTotal" method="post">

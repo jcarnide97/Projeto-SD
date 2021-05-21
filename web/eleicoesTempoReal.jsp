@@ -6,6 +6,7 @@
 <%@ page import="java.time.Duration" %>
 <%@ page import="java.util.Calendar" %>
 <%@ page import="java.util.GregorianCalendar" %>
+<%@ page import="meta1.MulticastLibrary" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="date" uri="/struts-tags" %>
@@ -13,6 +14,7 @@
 <html>
 <head>
     <title>Estado da Eleição</title>
+    <link rel="icon" type="image/png" href="resources/icon.png">
     <link rel="stylesheet" type="text/css" href="css/tempoReal.css">
     <script type="text/javascript">
 
@@ -41,13 +43,15 @@
             websocket.onerror   = onError;
         }
 
-        /*function onOpen(event) {
+        /*
+        function onOpen(event) {
             writeToHistory('Connected to ' + window.location.host + '.');
-            //document.getElementById('chat').onkeydown = function(key) {
+            document.getElementById('chat').onkeydown = function(key) {
                 if (key.keyCode == 13)
                     doSend(); // call doSend() on enter key press
             };
-        }*/
+        }
+        */
         
         function onClose(event) {
             writeToHistory('WebSocket closed (code ' + event.code + ').');
@@ -88,7 +92,7 @@
 </div>
 <div>
     <h2>Dados das Eleições em Tempo Real</h2>
-    <br>
+    <br><br>
     <div id="container"><div id="history"></div></div>
     <br>
     <form action="cancelar">

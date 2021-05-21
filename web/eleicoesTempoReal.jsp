@@ -65,7 +65,7 @@
         
         function doSend() {
             var message = document.getElementById('chat').value;
-            if (message != '')
+            if (message !== '')
                 websocket.send(message); // send the message to the server
             //document.getElementById('chat').value = '';
         }

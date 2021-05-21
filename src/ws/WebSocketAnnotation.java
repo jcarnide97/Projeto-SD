@@ -1,8 +1,11 @@
 package ws;
 
+import meta1.MulticastLibrary;
 import meta1.classes.User;
 
 import java.io.IOException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.Set;
@@ -38,8 +41,6 @@ public class WebSocketAnnotation {
     @OnClose
     public void end() {
     	// clean up once the WebSocket connection is closed
-        /*String message = "*" + username + "* left the chat.";
-        sendMessage(message);*/
         users.remove(this);
     }
 

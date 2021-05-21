@@ -425,7 +425,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerLibrary, Cli
             rmiRegistry.rebind("RMI_Server", rmiServer);
             rmiServer.udpServerConnection();
             System.out.println("Primary RMI Server is ready...");
-        } catch (RemoteException re) {
+        } catch (RemoteException  re) {
             System.out.println("Exception in Primary RMI Server: " + re.getMessage());
             try {
                 DatagramSocket cSocket = null;

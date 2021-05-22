@@ -52,6 +52,10 @@ and should reside on the classpath of the webapp (generally /WEB-INF/classes). -
           <result type="redirect">/adminMenu.jsp</result>
       </action>
 
+      <action name="cancelar2">
+          <result type="redirect">/index.jsp</result>
+      </action>
+
       <action name="button1">
           <interceptor-ref name="loginStack"/>
           <result>/criarDepartamento.jsp</result>

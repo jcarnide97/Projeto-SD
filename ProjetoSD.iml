@@ -57,9 +57,10 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="async-http-client-1.9.31" level="project" />
-    <orderEntry type="library" name="json_simple-1.1" level="project" />
-    <orderEntry type="library" name="slf4j-api-1.7.13" level="project" />
-    <orderEntry type="library" name="websocket-api" level="project" />
+    <orderEntry type="library" name="async-http-client-1.9.312" level="project" />
+    <orderEntry type="library" name="json_simple-1.12" level="project" />
+    <orderEntry type="library" name="slf4j-api-1.7.131" level="project" />
+    <orderEntry type="library" name="slf4j-api-1.7.132" level="project" />
+    <orderEntry type="library" name="websocket-api1" level="project" />
   </component>
 </module>

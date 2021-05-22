@@ -170,13 +170,14 @@ and should reside on the classpath of the webapp (generally /WEB-INF/classes). -
       </action>
 
       <action name="votar" class="action.VotarAction" method="execute">
-          <interceptor-ref name="loginStack"/>
+          <!--<interceptor-ref name="loginStack"/>-->
           <result name="success">/votar.jsp</result>
           <result name="error">/index.jsp</result>
       </action>
 
       <action name="votarTotal" class="action.VotarTotalAction" method="execute">
-          <interceptor-ref name="loginStack"/>
+          <!--<interceptor-ref name="loginStack"/>-->
+          <result name="facebook">/partilha.jsp</result>
           <result name="success">/index.jsp</result>
           <result name="error">/votar.jsp</result>
       </action>

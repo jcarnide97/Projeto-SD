@@ -20,6 +20,10 @@ public class VotarTotalAction extends Action implements SessionAware {
             Voto v = new Voto((User)this.session.get("utilizador"),listaTotal,"Online",date);
             this.getEVotingBean().addVoto((Eleicao)this.session.get("eleicao"),v);
             System.out.println("votou em "+listaTotal.getNome()+" eleicao: "+((Eleicao)this.session.get("eleicao")).getTitulo());
+            if(((User) this.session.get("utilizador")).getFaceId()!=null){
+                System.out.println("weiiiiiiiiiii");
+                return "facebook";
+            }
             return SUCCESS;
         }
         return ERROR;

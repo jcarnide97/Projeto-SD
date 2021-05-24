@@ -20,7 +20,7 @@ public class EleicoesPassadasAction extends Action implements SessionAware {
         if (this.titulo != null && !titulo.equals("")) {
             try {
                 for (Eleicao eleicao : this.getEVotingBean().getListaEleicoes()) {
-                    if (titulo.toLowerCase().equals(eleicao.getTitulo())) {
+                    if (titulo.toLowerCase().equals(eleicao.getTitulo().toLowerCase())) {
                         String res = "Resultados das Eleições:\n";
                         float totalVotos = eleicao.getListaVotos().size();
                         res += "Total de votos: " + (int)totalVotos + "\n";

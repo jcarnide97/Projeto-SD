@@ -51,7 +51,7 @@ public class eVotingBean extends UnicastRemoteObject {
         Token EMPTY_TOKEN = null;
         // Replace these with your own api key and secret
         String apiKey = "482895983046573";
-        String apiSecret = "3cab1739bc688c729a8dd301bd666f4f";
+        String apiSecret = "secretKey";
 
         service = new ServiceBuilder()
                 .provider(FacebookApi2.class)
